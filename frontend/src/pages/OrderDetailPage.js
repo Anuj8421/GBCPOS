@@ -130,8 +130,14 @@ const OrderDetailPage = () => {
         acceptedAt: mockAcceptedAt,
         readyAt: mockReadyAt,
         scheduledFor: mockScheduledFor,
+        deliveredAt: mockDeliveredAt,
+        cancelledAt: mockCancelledAt,
+        refundedAt: mockRefundedAt,
         prepTime: 20,
-        specialInstructions: 'Please ring doorbell twice'
+        specialInstructions: 'Please ring doorbell twice',
+        storeName: 'General Bilimoria\'s Canteen',
+        storeAddress: '18 Leeming Road, Borehamwood',
+        ...additionalData
       };
       setOrder(mockOrder);
       setPrepTime(mockOrder.prepTime);
