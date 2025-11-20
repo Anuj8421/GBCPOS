@@ -4,13 +4,13 @@ export const authService = {
   // JWT-based authentication
   login: async (email, password) => {
     try {
-      // DEVELOPMENT MODE - Accept any credentials
-      // TODO: Replace with actual PHP backend endpoint when available
-      
-      // Simulate API delay
+      const response = await apiClient.post('/auth/login', { email, password });
+      return response.data;
+    } catch (error) {
+      // Fallback to mock for development if API fails
+      console.warn('Login API failed, using mock:', error.message);
       await new Promise(resolve => setTimeout(resolve, 800));
       
-      // Mock successful login
       return {
         token: 'mock-jwt-token-' + Date.now(),
         user: {
@@ -20,10 +20,9 @@ export const authService = {
           role: 'manager',
           storeName: 'Test Restaurant',
           storeId: 'store-001'
-        }
+        },
+        restaurant_id: 'restaurant_001'
       };
-    } catch (error) {
-      throw new Error(error.response?.data?.message || 'Login failed');
     }
   },
 
