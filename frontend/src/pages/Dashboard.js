@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { analyticsService } from '@/services/analytics.service';
-import { formatCurrency, formatRelativeTime } from '@/utils/helpers';
+import { formatCurrency, formatRelativeTime, formatDate } from '@/utils/helpers';
 import { 
   DollarSign, 
   ShoppingCart, 
@@ -11,21 +14,52 @@ import {
   Package,
   Star,
   Users,
-  AlertCircle
+  AlertCircle,
+  CalendarIcon,
+  RefreshCw,
+  ChefHat,
+  ExternalLink,
+  AlertTriangle
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { addDays, format } from 'date-fns';
+import { cn } from '@/lib/utils';
 
 const Dashboard = () => {
   const [summary, setSummary] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [dateRange, setDateRange] = useState({
+    from: new Date(),
+    to: new Date()
+  });
+  const [lastSync, setLastSync] = useState(new Date());
+  const [syncStatus, setSyncStatus] = useState('synced'); // 'synced', 'delayed', 'disconnected'
 
   useEffect(() => {
     fetchDashboardData();
+    // Update last sync time every minute
+    const syncInterval = setInterval(() => {
+      const timeSinceSync = Date.now() - lastSync.getTime();
+      if (timeSinceSync > 5 * 60 * 1000) { // 5 minutes
+        setSyncStatus('delayed');
+      } else if (timeSinceSync > 15 * 60 * 1000) { // 15 minutes
+        setSyncStatus('disconnected');
+      } else {
+        setSyncStatus('synced');
+      }
+    }, 60000);
+
+    return () => clearInterval(syncInterval);
   }, []);
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, [dateRange]);
 
   const fetchDashboardData = async () => {
     try {
-      // const data = await analyticsService.getDashboardSummary();
+      setLoading(true);
+      // const data = await analyticsService.getDashboardSummary(dateRange);
       // setSummary(data);
       
       // Mock data for now - will be replaced with real data from PHP backend
@@ -59,14 +93,33 @@ const Dashboard = () => {
             total: 67.25,
             createdAt: new Date(Date.now() - 20 * 60 * 1000).toISOString()
           }
+        ],
+        topDishes: [
+          { name: 'Paneer Tikka Masala', orders: 24, revenue: 993.60, image: 'https://storage.googleapis.com/food_order_php_app/dishes/68c86a47a3ac4_Paneer_Tikka_Masala-removebg-preview.jpg' },
+          { name: 'Vegetable Masala', orders: 18, revenue: 183.60, image: 'https://storage.googleapis.com/food_order_php_app/dishes/68c86959c4af2_Vegetable_Masala-removebg-preview.jpg' },
+          { name: 'Butter Chicken', orders: 15, revenue: 621.00, image: null }
+        ],
+        frequentCustomers: [
+          { name: 'John Smith', orders: 12, totalSpent: 456.80, phone: '+449526315487' },
+          { name: 'Sarah Johnson', orders: 8, totalSpent: 342.50, phone: '+449526315488' },
+          { name: 'Mike Davis', orders: 6, totalSpent: 289.30, phone: '+449526315489' }
         ]
       });
+      
+      setLastSync(new Date());
+      setSyncStatus('synced');
     } catch (error) {
       console.error('Failed to fetch dashboard data:', error);
       toast.error('Failed to load dashboard data');
+      setSyncStatus('disconnected');
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleRefresh = () => {
+    fetchDashboardData();
+    toast.success('Dashboard refreshed');
   };
 
   if (loading) {
