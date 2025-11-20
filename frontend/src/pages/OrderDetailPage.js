@@ -538,10 +538,10 @@ const OrderDetailPage = () => {
                   className="w-full bg-green-600 hover:bg-green-700"
                   onClick={handleMarkPickedUp}
                   disabled={processing}
-                  data-testid="mark-picked-up-button"
+                  data-testid="out-for-delivery-button"
                 >
                   <Truck className="w-4 h-4 mr-2" />
-                  Mark as Picked Up / Out for Delivery
+                  Out for Delivery
                 </Button>
                 <Button
                   variant="outline"
