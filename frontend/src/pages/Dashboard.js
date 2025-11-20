@@ -64,7 +64,15 @@ const Dashboard = () => {
       // const data = await analyticsService.getDashboardSummary(dateRange);
       // setSummary(data);
       
-      // Mock data for now - will be replaced with real data from PHP backend
+      // Calculate days difference for dynamic data
+      const daysDiff = dateRange.to 
+        ? Math.ceil((dateRange.to - dateRange.from) / (1000 * 60 * 60 * 24)) + 1
+        : 1;
+      
+      // Mock data that changes based on date range
+      const baseOrdersPerDay = 16;
+      const baseSalesPerDay = 417;
+      
       setSummary({
         todaySales: 1250.50,
         todayOrders: 48,
