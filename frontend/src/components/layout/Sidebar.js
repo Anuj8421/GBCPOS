@@ -64,7 +64,7 @@ const Sidebar = () => {
       </nav>
 
       {/* Version Info */}
-      <div className="p-4 border-t border-gray-200 text-xs text-gray-500 text-center">
+      <div className="p-4 border-t border-white/10 text-xs text-white/60 text-center">
         iMin Swift 2 Pro<br />v1.0.0
       </div>
     </div>
