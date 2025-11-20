@@ -74,8 +74,8 @@ const Dashboard = () => {
       const baseSalesPerDay = 417;
       
       setSummary({
-        todaySales: 1250.50,
-        todayOrders: 48,
+        todaySales: baseSalesPerDay * daysDiff,
+        todayOrders: baseOrdersPerDay * daysDiff,
         pendingOrders: 5,
         avgPrepTime: 18,
         completionRate: 95,
