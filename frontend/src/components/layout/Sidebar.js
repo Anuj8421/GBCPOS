@@ -30,7 +30,7 @@ const Sidebar = () => {
   const isActive = (path) => location.pathname === path || location.pathname.startsWith(path + '/');
 
   return (
-    <div className="w-64 bg-brand-navy border-r border-brand-navy flex flex-col pt-16" data-testid="sidebar">
+    <div className="w-64 bg-brand-navy border-r border-brand-navy flex flex-col h-full" data-testid="sidebar">
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto py-4" data-testid="sidebar-nav">
         {menuItems.map((item) => {
