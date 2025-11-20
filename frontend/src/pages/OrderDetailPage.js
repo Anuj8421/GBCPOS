@@ -54,6 +54,10 @@ const OrderDetailPage = () => {
       let mockAcceptedAt = null;
       let mockReadyAt = null;
       let mockScheduledFor = null;
+      let mockDeliveredAt = null;
+      let mockCancelledAt = null;
+      let mockRefundedAt = null;
+      let additionalData = {};
       
       // For testing different statuses based on order ID
       if (orderId.includes('12346')) {
@@ -65,8 +69,38 @@ const OrderDetailPage = () => {
         mockReadyAt = new Date(Date.now() - 5 * 60 * 1000).toISOString();
       } else if (orderId.includes('12348')) {
         mockStatus = 'scheduled';
-        // Schedule for 2 hours from now
         mockScheduledFor = new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString();
+      } else if (orderId.includes('12349')) {
+        mockStatus = 'delivered';
+        mockAcceptedAt = new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString();
+        mockReadyAt = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
+        mockDeliveredAt = new Date(Date.now() - 1.5 * 60 * 60 * 1000).toISOString();
+        additionalData = {
+          deliveredBy: 'John Driver',
+          deliveryProofPhoto: '/mock-delivery-proof.jpg',
+          deliveryNotes: 'Left at door as requested',
+          otpVerified: true,
+          customerRating: 5,
+          customerReview: 'Excellent service! Food was hot and delicious.'
+        };
+      } else if (orderId.includes('12351')) {
+        mockStatus = 'cancelled';
+        mockCancelledAt = new Date(Date.now() - 3.8 * 60 * 60 * 1000).toISOString();
+        additionalData = {
+          whoCancelled: 'Customer cancelled',
+          cancellationReason: 'Customer request'
+        };
+      } else if (orderId.includes('12353')) {
+        mockStatus = 'refunded';
+        mockDeliveredAt = new Date(Date.now() - 23 * 60 * 60 * 1000).toISOString();
+        mockRefundedAt = new Date(Date.now() - 22 * 60 * 60 * 1000).toISOString();
+        additionalData = {
+          refundAmount: 48.90,
+          refundType: 'Full refund',
+          refundMethod: 'Back to card',
+          refundReason: 'Customer complaint',
+          refundProcessedBy: 'System Admin'
+        };
       }
       
       const mockOrder = {
