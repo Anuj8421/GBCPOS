@@ -313,10 +313,20 @@ const OrderDetailPage = () => {
             <p className="text-gray-600 mt-1">{formatRelativeTime(order.createdAt)}</p>
           </div>
         </div>
-        <Badge className={statusBadge.color} data-testid="order-status-badge">
-          <span className="mr-1">{statusBadge.icon}</span>
-          {statusBadge.label}
-        </Badge>
+        <div className="flex items-center gap-3">
+          <Button
+            variant="outline"
+            onClick={() => setShowReceiptPreview(true)}
+            data-testid="preview-receipt-button"
+          >
+            <Printer className="w-4 h-4 mr-2" />
+            Preview Receipt
+          </Button>
+          <Badge className={statusBadge.color} data-testid="order-status-badge">
+            <span className="mr-1">{statusBadge.icon}</span>
+            {statusBadge.label}
+          </Badge>
+        </div>
       </div>
 
       {/* Scheduled Order Banner */}
