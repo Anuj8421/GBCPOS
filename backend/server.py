@@ -315,44 +315,50 @@ async def cancel_order(cancel: OrderCancel):
 @api_router.post("/auth/login")
 async def login(credentials: LoginRequest):
     """
-    Proxy login to PHP backend
-    Returns token and restaurant_id
+    Authenticate user against MySQL database
+    Returns JWT token and user data
     """
     try:
         logger.info(f"Login attempt for: {credentials.email}")
         
-        # Forward login request to PHP backend
-        async with httpx.AsyncClient(timeout=30.0) as client:
-            response = await client.post(
-                PHP_LOGIN,
-                json=credentials.model_dump(),
-                headers={"Content-Type": "application/json"}
+        # Import auth module
+        from auth import authenticate_user, create_access_token
+        
+        # Authenticate against MySQL database
+        user_data = await authenticate_user(credentials.email, credentials.password)
+        
+        if not user_data:
+            raise HTTPException(
+                status_code=401,
+                detail="Invalid credentials"
             )
-            
-            if response.status_code != 200:
-                raise HTTPException(
-                    status_code=401,
-                    detail="Invalid credentials"
-                )
-            
-            # Parse response from PHP backend
-            php_response = response.json()
-            
-            # Store session in MongoDB for tracking
-            await db.sessions.insert_one({
-                "email": credentials.email,
-                "restaurant_id": php_response.get('restaurant_id'),
-                "logged_in_at": datetime.now(timezone.utc).isoformat()
-            })
-            
-            return JSONResponse(
-                status_code=200,
-                content=php_response
-            )
+        
+        # Create JWT token
+        token_data = {
+            "sub": user_data['email'],
+            "user_id": user_data['id'],
+            "restaurant_id": user_data.get('restaurant_id')
+        }
+        token = create_access_token(token_data)
+        
+        # Store session in MongoDB for tracking
+        await db.sessions.insert_one({
+            "email": credentials.email,
+            "restaurant_id": user_data.get('restaurant_id'),
+            "logged_in_at": datetime.now(timezone.utc).isoformat()
+        })
+        
+        logger.info(f"Login successful for: {credentials.email}")
+        
+        return JSONResponse(
+            status_code=200,
+            content={
+                "token": token,
+                "user": user_data,
+                "restaurant_id": user_data.get('restaurant_id')
+            }
+        )
     
-    except httpx.RequestError as e:
-        logger.error(f"Network error during login: {str(e)}")
-        raise HTTPException(status_code=503, detail="Authentication service unavailable. Please try again later.")
     except HTTPException:
         raise
     except Exception as e:
