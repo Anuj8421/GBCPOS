@@ -38,4 +38,4 @@ apiClient.interceptors.response.use(
   }
 );
 
-export { apiClient, BACKEND_URL, PHP_API_BASE };
+export { apiClient, BACKEND_URL, API_BASE };
