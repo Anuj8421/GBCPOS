@@ -752,6 +752,119 @@ const OrderDetailPage = () => {
         </div>
       </div>
 
+      {/* Receipt Preview Dialog */}
+      <AlertDialog open={showReceiptPreview} onOpenChange={setShowReceiptPreview}>
+        <AlertDialogContent className="max-w-md">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Receipt Preview</AlertDialogTitle>
+            <AlertDialogDescription>
+              Order #{order.id}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="py-4 max-h-[60vh] overflow-y-auto">
+            {/* Receipt Content matching the PDF format */}
+            <div className="space-y-4 text-sm bg-white p-4 border rounded">
+              {/* Logo and Store Info */}
+              <div className="text-center border-b pb-4">
+                <img src="/gbc-logo.png" alt="GBC Logo" className="h-16 mx-auto mb-2" />
+                <p className="font-bold">{order.storeName || "General Bilimoria's Canteen"}</p>
+                <p className="text-xs text-gray-600">{order.storeAddress || "Borehamwood, 18 Leeming Road"}</p>
+              </div>
+
+              {/* Order Details */}
+              <div className="space-y-1 border-b pb-3">
+                <div className="flex justify-between">
+                  <span className="font-medium">Order</span>
+                  <span>{order.id}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="font-medium">Date</span>
+                  <span>{formatDateTime(order.createdAt)}</span>
+                </div>
+              </div>
+
+              {/* Customer Details */}
+              <div className="space-y-1 border-b pb-3">
+                <p className="font-medium">Customer</p>
+                <div className="pl-2 space-y-1 text-xs">
+                  <p><span className="font-medium">Name:</span> {order.customerName}</p>
+                  <p><span className="font-medium">Address:</span> {order.deliveryAddress}</p>
+                </div>
+              </div>
+
+              {/* Order Items */}
+              <div className="space-y-2 border-b pb-3">
+                {order.items.map((item, idx) => (
+                  <div key={idx} className="space-y-1">
+                    <div className="flex justify-between">
+                      <span>{item.name} x{item.quantity}</span>
+                      <span>{formatCurrency(item.price * item.quantity)}</span>
+                    </div>
+                    {item.modifiers && item.modifiers.length > 0 && (
+                      <div className="pl-4 text-xs text-gray-600">
+                        {item.modifiers.map((mod, i) => (
+                          <p key={i}>+ {mod}</p>
+                        ))}
+                      </div>
+                    )}
+                    {item.notes && (
+                      <p className="pl-4 text-xs text-gray-600 italic">(note: {item.notes})</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              {/* Totals */}
+              <div className="space-y-1">
+                <div className="flex justify-between">
+                  <span>Subtotal</span>
+                  <span>{formatCurrency(order.subtotal)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Tax</span>
+                  <span>{formatCurrency(order.tax)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Delivery Fee</span>
+                  <span>{formatCurrency(order.deliveryFee)}</span>
+                </div>
+                <div className="flex justify-between font-bold text-base border-t pt-2 mt-2">
+                  <span>Total</span>
+                  <span>{formatCurrency(order.total)}</span>
+                </div>
+              </div>
+
+              {/* Special Instructions */}
+              {order.specialInstructions && (
+                <div className="border-t pt-3 text-xs">
+                  <p className="font-medium">Order note:</p>
+                  <p className="text-gray-600">{order.specialInstructions}</p>
+                </div>
+              )}
+
+              {/* Footer */}
+              <div className="text-center text-xs text-gray-600 border-t pt-3">
+                <p>Thank you for Ordering</p>
+                <p>See you again Online!</p>
+              </div>
+            </div>
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Close</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={() => {
+                printerService.printCustomerReceipt(order);
+                toast.success('Printing receipt...');
+              }}
+              className="bg-brand-orange hover:bg-brand-orange/90"
+            >
+              <Printer className="w-4 h-4 mr-2" />
+              Print Receipt
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       {/* Cancel Dialog */}
       <AlertDialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
         <AlertDialogContent>
