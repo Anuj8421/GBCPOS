@@ -82,11 +82,11 @@ const Header = () => {
         {/* User Menu */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="flex items-center space-x-2" data-testid="user-menu-button">
-              <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center">
-                <User className="w-4 h-4 text-orange-600" />
+            <Button variant="ghost" className="flex items-center space-x-2 hover:bg-white/10" data-testid="user-menu-button">
+              <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center">
+                <User className="w-4 h-4 text-brand-orange" />
               </div>
-              <span className="text-sm font-medium">{user?.name || 'User'}</span>
+              <span className="text-sm font-medium text-white">{user?.name || 'User'}</span>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
