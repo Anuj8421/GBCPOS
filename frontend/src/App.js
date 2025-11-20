@@ -45,6 +45,8 @@ function App() {
               <Route path="menu" element={<MenuPage />} />
               <Route path="store" element={<StorePage />} />
               <Route path="analytics" element={<AnalyticsPage />} />
+              <Route path="analytics/top-dishes" element={<TopDishesPage />} />
+              <Route path="analytics/frequent-customers" element={<FrequentCustomersPage />} />
               <Route path="finance" element={<FinancePage />} />
               <Route path="users" element={<UsersPage />} />
               <Route path="settings" element={<SettingsPage />} />
