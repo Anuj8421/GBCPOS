@@ -132,20 +132,20 @@ const Dashboard = () => {
 
   const statsCards = [
     {
-      title: "Today's Sales",
+      title: "Sales",
       value: formatCurrency(summary.todaySales),
       icon: DollarSign,
       color: 'text-green-600',
       bgColor: 'bg-green-50',
-      testId: 'today-sales-card'
+      testId: 'sales-card'
     },
     {
-      title: "Today's Orders",
+      title: "Orders",
       value: summary.todayOrders,
       icon: ShoppingCart,
       color: 'text-blue-600',
       bgColor: 'bg-blue-50',
-      testId: 'today-orders-card'
+      testId: 'orders-card'
     },
     {
       title: 'Pending Orders',
