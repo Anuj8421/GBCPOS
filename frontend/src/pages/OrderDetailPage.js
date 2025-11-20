@@ -260,7 +260,10 @@ const OrderDetailPage = () => {
       pending: { color: 'bg-yellow-100 text-yellow-800', icon: '🟨', label: 'Pending' },
       accepted: { color: 'bg-blue-100 text-blue-800', icon: '🟦', label: 'Accepted' },
       ready: { color: 'bg-green-100 text-green-800', icon: '🟢', label: 'Ready' },
-      scheduled: { color: 'bg-purple-100 text-purple-800', icon: '🟣', label: 'Scheduled' }
+      scheduled: { color: 'bg-purple-100 text-purple-800', icon: '🟣', label: 'Scheduled' },
+      delivered: { color: 'bg-green-500 text-white', icon: '✓', label: 'Delivered' },
+      cancelled: { color: 'bg-red-500 text-white', icon: '✗', label: 'Cancelled' },
+      refunded: { color: 'bg-gray-500 text-white', icon: '↺', label: 'Refunded' }
     };
     return statusConfig[order.status] || statusConfig.pending;
   };
