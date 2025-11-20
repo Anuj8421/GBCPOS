@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,7 +21,7 @@ import { orderService } from '@/services/order.service';
 import { printerService } from '@/services/printer.service';
 import { formatCurrency, formatDateTime, formatRelativeTime } from '@/utils/helpers';
 import { ORDER_STATUS_COLORS, ORDER_STATUS_LABELS } from '@/utils/constants';
-import { ArrowLeft, Clock, Phone, MapPin, Printer, Check, X } from 'lucide-react';
+import { ArrowLeft, Clock, Phone, MapPin, Printer, Check, X, Truck, Tag } from 'lucide-react';
 import { toast } from 'sonner';
 
 const OrderDetailPage = () => {
@@ -32,6 +33,14 @@ const OrderDetailPage = () => {
   const [cancelReason, setCancelReason] = useState('');
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [processing, setProcessing] = useState(false);
+  const [selectedDriver, setSelectedDriver] = useState('');
+
+  // Mock driver list
+  const drivers = [
+    { id: 'driver1', name: 'John Driver', phone: '+44 7700 900001' },
+    { id: 'driver2', name: 'Sarah Rider', phone: '+44 7700 900002' },
+    { id: 'driver3', name: 'Mike Courier', phone: '+44 7700 900003' }
+  ];
 
   useEffect(() => {
     fetchOrderDetails();
@@ -39,17 +48,14 @@ const OrderDetailPage = () => {
 
   const fetchOrderDetails = async () => {
     try {
-      // const data = await orderService.getOrderById(orderId);
-      // setOrder(data);
-
-      // Mock data
-      setOrder({
+      // Mock data - will be replaced with real API
+      const mockOrder = {
         id: orderId,
         customerName: 'John Smith',
         customerPhone: '(555) 123-4567',
         customerEmail: 'john.smith@email.com',
         deliveryAddress: '123 Main St, Apt 4B, New York, NY 10001',
-        status: 'pending',
+        status: 'pending', // Can be: pending, accepted, ready, scheduled
         total: 45.99,
         subtotal: 39.99,
         tax: 3.00,
@@ -67,9 +73,14 @@ const OrderDetailPage = () => {
           { name: 'Coca Cola', quantity: 2, price: 2.50 }
         ],
         createdAt: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
-        specialInstructions: 'Please ring doorbell twice',
-        prepTime: null
-      });
+        acceptedAt: null,
+        readyAt: null,
+        scheduledFor: null,
+        prepTime: 20,
+        specialInstructions: 'Please ring doorbell twice'
+      };
+      setOrder(mockOrder);
+      setPrepTime(mockOrder.prepTime);
     } catch (error) {
       console.error('Failed to fetch order:', error);
       toast.error('Failed to load order details');
@@ -124,7 +135,8 @@ const OrderDetailPage = () => {
       await printerService.printDeliverySticker(order);
       
       toast.success('Order marked as ready!');
-      navigate('/orders');
+      // Refresh order details
+      fetchOrderDetails();
     } catch (error) {
       toast.error('Failed to mark order as ready');
     } finally {
@@ -132,13 +144,72 @@ const OrderDetailPage = () => {
     }
   };
 
-  const handlePrintReceipt = async () => {
+  const handleUpdatePrepTime = async () => {
+    try {
+      // await orderService.setPrepTime(orderId, prepTime);
+      toast.success('Prep time updated');
+    } catch (error) {
+      toast.error('Failed to update prep time');
+    }
+  };
+
+  const handlePrintKitchenReceipt = async () => {
     const result = await printerService.printKitchenReceipt(order);
     if (result.success) {
       toast.success('Kitchen receipt printed');
     } else {
       toast.error('Failed to print: ' + result.error);
     }
+  };
+
+  const handlePrintSticker = async () => {
+    const result = await printerService.printDeliverySticker(order);
+    if (result.success) {
+      toast.success('Delivery sticker printed');
+    } else {
+      toast.error('Failed to print: ' + result.error);
+    }
+  };
+
+  const handleAssignDriver = async () => {
+    if (!selectedDriver) {
+      toast.error('Please select a driver');
+      return;
+    }
+    try {
+      // await orderService.assignDriver(orderId, selectedDriver);
+      const driver = drivers.find(d => d.id === selectedDriver);
+      toast.success(`Order assigned to ${driver.name}`);
+    } catch (error) {
+      toast.error('Failed to assign driver');
+    }
+  };
+
+  const handleMarkPickedUp = async () => {
+    try {
+      // await orderService.updateOrderStatus(orderId, 'out_for_delivery');
+      toast.success('Order marked as out for delivery');
+      navigate('/orders');
+    } catch (error) {
+      toast.error('Failed to update order status');
+    }
+  };
+
+  const getStatusBadge = () => {
+    const statusConfig = {
+      pending: { color: 'bg-yellow-100 text-yellow-800', icon: '🟨', label: 'Pending' },
+      accepted: { color: 'bg-blue-100 text-blue-800', icon: '🟦', label: 'Accepted' },
+      ready: { color: 'bg-green-100 text-green-800', icon: '🟢', label: 'Ready' },
+      scheduled: { color: 'bg-purple-100 text-purple-800', icon: '🟣', label: 'Scheduled' }
+    };
+    return statusConfig[order.status] || statusConfig.pending;
+  };
+
+  const calculateScheduledPrepStart = () => {
+    if (!order.scheduledFor || !order.prepTime) return null;
+    const scheduledTime = new Date(order.scheduledFor);
+    const prepStartTime = new Date(scheduledTime.getTime() - order.prepTime * 60 * 1000);
+    return prepStartTime;
   };
 
   if (loading) {
@@ -158,6 +229,9 @@ const OrderDetailPage = () => {
     );
   }
 
+  const statusBadge = getStatusBadge();
+  const prepStartTime = calculateScheduledPrepStart();
+
   return (
     <div className="space-y-6 max-w-4xl mx-auto" data-testid="order-detail-page">
       {/* Header */}
@@ -176,10 +250,32 @@ const OrderDetailPage = () => {
             <p className="text-gray-600 mt-1">{formatRelativeTime(order.createdAt)}</p>
           </div>
         </div>
-        <Badge className={ORDER_STATUS_COLORS[order.status]} data-testid="order-status-badge">
-          {ORDER_STATUS_LABELS[order.status]}
+        <Badge className={statusBadge.color} data-testid="order-status-badge">
+          <span className="mr-1">{statusBadge.icon}</span>
+          {statusBadge.label}
         </Badge>
       </div>
+
+      {/* Scheduled Order Banner */}
+      {order.status === 'scheduled' && order.scheduledFor && (
+        <Card className="border-purple-200 bg-purple-50">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="font-semibold text-purple-900 flex items-center gap-2">
+                  <Clock className="w-5 h-5" />
+                  Scheduled for: {formatDateTime(order.scheduledFor)}
+                </p>
+                {prepStartTime && (
+                  <Badge className="mt-2 bg-purple-600 text-white">
+                    Prep should start at {formatDateTime(prepStartTime)}
+                  </Badge>
+                )}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main Content */}
@@ -193,7 +289,7 @@ const OrderDetailPage = () => {
               <div className="flex items-center space-x-2">
                 <Phone className="w-4 h-4 text-gray-400" />
                 <div>
-                  <p className="font-medium text-gray-900">{order.customerName}</p>
+                  <p className="font-medium text-gray-900">Customer Name (Restaurant Only)</p>
                   <p className="text-sm text-gray-600">{order.customerPhone}</p>
                   <p className="text-sm text-gray-600">{order.customerEmail}</p>
                 </div>
@@ -286,7 +382,7 @@ const OrderDetailPage = () => {
             </CardContent>
           </Card>
 
-          {/* Actions */}
+          {/* Actions for PENDING Order */}
           {order.status === 'pending' && (
             <Card data-testid="order-actions-card">
               <CardHeader>
@@ -327,7 +423,7 @@ const OrderDetailPage = () => {
                 <Button
                   variant="outline"
                   className="w-full"
-                  onClick={handlePrintReceipt}
+                  onClick={handlePrintKitchenReceipt}
                   data-testid="print-receipt-button"
                 >
                   <Printer className="w-4 h-4 mr-2" />
@@ -337,15 +433,29 @@ const OrderDetailPage = () => {
             </Card>
           )}
 
+          {/* Actions for ACCEPTED Order */}
           {order.status === 'accepted' && (
-            <Card data-testid="mark-ready-card">
+            <Card data-testid="accepted-order-actions">
               <CardHeader>
-                <CardTitle>Order Progress</CardTitle>
+                <CardTitle>Order in Progress</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex items-center space-x-2 text-sm text-gray-600">
-                  <Clock className="w-4 h-4" />
-                  <span>Prep time: {order.prepTime} minutes</span>
+                <div>
+                  <Label htmlFor="prep-time-edit">Change Prep Time (minutes)</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      id="prep-time-edit"
+                      type="number"
+                      min="5"
+                      max="120"
+                      value={prepTime}
+                      onChange={(e) => setPrepTime(parseInt(e.target.value))}
+                      data-testid="prep-time-edit-input"
+                    />
+                    <Button onClick={handleUpdatePrepTime} size="sm">
+                      Update
+                    </Button>
+                  </div>
                 </div>
                 <Button
                   className="w-full bg-blue-600 hover:bg-blue-700"
@@ -358,11 +468,78 @@ const OrderDetailPage = () => {
                 <Button
                   variant="outline"
                   className="w-full"
-                  onClick={handlePrintReceipt}
-                  data-testid="print-receipt-button"
+                  onClick={handlePrintKitchenReceipt}
+                  data-testid="print-kitchen-receipt-btn"
                 >
                   <Printer className="w-4 h-4 mr-2" />
                   Print Kitchen Receipt
+                </Button>
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={handlePrintSticker}
+                  data-testid="print-sticker-btn"
+                >
+                  <Tag className="w-4 h-4 mr-2" />
+                  Print Sticker (Delivery Label)
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Actions for READY Order */}
+          {order.status === 'ready' && (
+            <Card data-testid="ready-order-actions">
+              <CardHeader>
+                <CardTitle>Ready for Delivery</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label htmlFor="driver-select">Assign Driver</Label>
+                  <div className="flex gap-2">
+                    <Select value={selectedDriver} onValueChange={setSelectedDriver}>
+                      <SelectTrigger id="driver-select" data-testid="driver-select">
+                        <SelectValue placeholder="Select driver" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {drivers.map((driver) => (
+                          <SelectItem key={driver.id} value={driver.id}>
+                            {driver.name} - {driver.phone}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Button onClick={handleAssignDriver} size="sm">
+                      Assign
+                    </Button>
+                  </div>
+                </div>
+                <Button
+                  className="w-full bg-green-600 hover:bg-green-700"
+                  onClick={handleMarkPickedUp}
+                  disabled={processing}
+                  data-testid="mark-picked-up-button"
+                >
+                  <Truck className="w-4 h-4 mr-2" />
+                  Mark as Picked Up / Out for Delivery
+                </Button>
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={handlePrintKitchenReceipt}
+                  data-testid="print-receipt-ready"
+                >
+                  <Printer className="w-4 h-4 mr-2" />
+                  Print Kitchen Receipt
+                </Button>
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={handlePrintSticker}
+                  data-testid="print-label-ready"
+                >
+                  <Tag className="w-4 h-4 mr-2" />
+                  Print Sticker / Label
                 </Button>
               </CardContent>
             </Card>
