@@ -52,8 +52,8 @@ const Sidebar = () => {
               className={cn(
                 'flex items-center space-x-3 px-4 py-3 mx-2 rounded-lg transition-colors',
                 isActive(item.path)
-                  ? 'bg-brand-orange/10 text-brand-orange'
-                  : 'text-gray-700 hover:bg-gray-50'
+                  ? 'bg-brand-orange text-white'
+                  : 'text-white/80 hover:bg-white/10'
               )}
             >
               <Icon className="w-5 h-5" />
