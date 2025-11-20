@@ -28,7 +28,18 @@ const Header = () => {
   };
 
   return (
-    <header className="h-16 bg-brand-orange border-b border-brand-orange/80 flex items-center justify-between px-4" data-testid="header">
+    <>
+      {/* Fixed Logo Section */}
+      <div className="fixed top-0 left-0 w-64 h-16 bg-brand-orange z-50 flex items-center justify-center border-r border-brand-orange">
+        <img 
+          src="/gbc-logo-white.png" 
+          alt="GBC Logo" 
+          className="h-12 w-auto"
+        />
+      </div>
+
+      {/* Header */}
+      <header className="h-16 bg-brand-orange border-b border-brand-orange/80 flex items-center justify-between px-4 pl-4 ml-64" data-testid="header">
       {/* Store Status */}
       <div className="flex items-center space-x-3">
         <div className="flex items-center space-x-2">
