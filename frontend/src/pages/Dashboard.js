@@ -420,10 +420,18 @@ const Dashboard = () => {
         </CardContent>
       </Card>
 
-      {/* Top Sold Dishes Today */}
+      {/* Top Sold Dishes */}
       <Card data-testid="top-dishes-card">
-        <CardHeader>
-          <CardTitle>Top Sold Dishes Today</CardTitle>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle>Top Sold Dishes</CardTitle>
+          <Button 
+            variant="ghost" 
+            size="sm"
+            onClick={() => navigate('/analytics?view=dishes')}
+            data-testid="view-all-dishes-button"
+          >
+            View All →
+          </Button>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
