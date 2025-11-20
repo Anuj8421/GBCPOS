@@ -38,8 +38,7 @@ const Header = () => {
         />
       </div>
 
-      {/* Store Status */}
-      <div className="flex-1 flex items-center justify-between px-4">
+      {/* Store Status and Controls */}
       <div className="flex items-center space-x-3">
         <div className="flex items-center space-x-2">
           <span className="text-sm font-medium text-white">Store Status:</span>
