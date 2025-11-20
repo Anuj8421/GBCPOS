@@ -32,11 +32,12 @@ const Sidebar = () => {
   return (
     <div className="w-64 bg-white border-r border-gray-200 flex flex-col" data-testid="sidebar">
       {/* Logo */}
-      <div className="h-16 flex items-center justify-center border-b border-gray-200 px-4">
-        <div className="flex items-center space-x-2">
-          <ChefHat className="w-8 h-8 text-orange-600" />
-          <span className="text-xl font-bold text-gray-900">GBC POS</span>
-        </div>
+      <div className="h-16 flex items-center justify-center border-b border-gray-200 px-4 bg-white">
+        <img 
+          src="/gbc-logo.png" 
+          alt="GBC Logo" 
+          className="h-12 w-auto"
+        />
       </div>
 
       {/* Navigation */}
