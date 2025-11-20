@@ -85,6 +85,142 @@ const OrdersPage = () => {
           acceptedAt: new Date(Date.now() - 40 * 60 * 1000).toISOString(),
           readyAt: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
           prepTime: 35
+        },
+        {
+          id: 'ORD12348',
+          customerName: 'Emily Brown',
+          customerPhone: '(555) 456-7890',
+          deliveryAddress: '321 Elm Street',
+          status: 'scheduled',
+          total: 38.75,
+          subtotal: 33.00,
+          tax: 2.75,
+          deliveryFee: 3.00,
+          items: [
+            { name: 'Spaghetti Carbonara', quantity: 1, price: 18.00 },
+            { name: 'Garlic Bread', quantity: 1, price: 5.00 },
+            { name: 'Tiramisu', quantity: 1, price: 10.00 }
+          ],
+          createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+          scheduledFor: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
+          prepTime: 25
+        },
+        {
+          id: 'ORD12349',
+          customerName: 'David Wilson',
+          customerPhone: '(555) 567-8901',
+          deliveryAddress: '654 Maple Drive',
+          status: 'delivered',
+          total: 52.30,
+          subtotal: 45.00,
+          tax: 3.30,
+          deliveryFee: 4.00,
+          items: [
+            { name: 'Chicken Tikka', quantity: 2, price: 15.00 },
+            { name: 'Naan Bread', quantity: 3, price: 5.00 }
+          ],
+          createdAt: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
+          acceptedAt: new Date(Date.now() - 2.5 * 60 * 60 * 1000).toISOString(),
+          readyAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+          deliveredAt: new Date(Date.now() - 1.5 * 60 * 60 * 1000).toISOString(),
+          prepTime: 30
+        },
+        {
+          id: 'ORD12350',
+          customerName: 'Lisa Anderson',
+          customerPhone: '(555) 678-9012',
+          deliveryAddress: '987 Birch Lane',
+          status: 'delivered',
+          total: 28.50,
+          subtotal: 24.00,
+          tax: 1.90,
+          deliveryFee: 2.60,
+          items: [
+            { name: 'Margherita Pizza', quantity: 1, price: 14.00 },
+            { name: 'Caesar Salad', quantity: 1, price: 10.00 }
+          ],
+          createdAt: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
+          acceptedAt: new Date(Date.now() - 4.8 * 60 * 60 * 1000).toISOString(),
+          readyAt: new Date(Date.now() - 4.3 * 60 * 60 * 1000).toISOString(),
+          deliveredAt: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
+          prepTime: 25
+        },
+        {
+          id: 'ORD12351',
+          customerName: 'Robert Taylor',
+          customerPhone: '(555) 789-0123',
+          deliveryAddress: '147 Cedar Court',
+          status: 'cancelled',
+          total: 41.20,
+          subtotal: 36.00,
+          tax: 2.70,
+          deliveryFee: 2.50,
+          items: [
+            { name: 'Beef Burger', quantity: 2, price: 18.00 }
+          ],
+          createdAt: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
+          cancelledAt: new Date(Date.now() - 3.8 * 60 * 60 * 1000).toISOString(),
+          cancelReason: 'Customer requested cancellation',
+          prepTime: null
+        },
+        {
+          id: 'ORD12352',
+          customerName: 'Jennifer Martinez',
+          customerPhone: '(555) 890-1234',
+          deliveryAddress: '258 Willow Way',
+          status: 'cancelled',
+          total: 35.80,
+          subtotal: 31.00,
+          tax: 2.30,
+          deliveryFee: 2.50,
+          items: [
+            { name: 'Vegetable Curry', quantity: 1, price: 16.00 },
+            { name: 'Rice', quantity: 2, price: 7.50 }
+          ],
+          createdAt: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
+          cancelledAt: new Date(Date.now() - 5.5 * 60 * 60 * 1000).toISOString(),
+          cancelReason: 'Item unavailable',
+          prepTime: null
+        },
+        {
+          id: 'ORD12353',
+          customerName: 'William Garcia',
+          customerPhone: '(555) 901-2345',
+          deliveryAddress: '369 Spruce Street',
+          status: 'refunded',
+          total: 48.90,
+          subtotal: 42.00,
+          tax: 3.40,
+          deliveryFee: 3.50,
+          items: [
+            { name: 'Seafood Platter', quantity: 1, price: 42.00 }
+          ],
+          createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+          deliveredAt: new Date(Date.now() - 23 * 60 * 60 * 1000).toISOString(),
+          refundedAt: new Date(Date.now() - 22 * 60 * 60 * 1000).toISOString(),
+          refundReason: 'Quality issue reported by customer',
+          prepTime: 40
+        },
+        {
+          id: 'ORD12354',
+          customerName: 'Maria Rodriguez',
+          customerPhone: '(555) 012-3456',
+          deliveryAddress: '741 Ash Avenue',
+          status: 'refunded',
+          total: 31.25,
+          subtotal: 27.00,
+          tax: 2.05,
+          deliveryFee: 2.20,
+          items: [
+            { name: 'Club Sandwich', quantity: 1, price: 12.00 },
+            { name: 'French Fries', quantity: 1, price: 5.00 },
+            { name: 'Smoothie', quantity: 1, price: 10.00 }
+          ],
+          createdAt: new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString(),
+          deliveredAt: new Date(Date.now() - 47 * 60 * 60 * 1000).toISOString(),
+          refundedAt: new Date(Date.now() - 46 * 60 * 60 * 1000).toISOString(),
+          refundReason: 'Order delivered late',
+          prepTime: 20
         }
       ];
 
