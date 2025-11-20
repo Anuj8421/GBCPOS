@@ -49,13 +49,33 @@ const OrderDetailPage = () => {
   const fetchOrderDetails = async () => {
     try {
       // Mock data - will be replaced with real API
+      // Determine status based on order ID for testing
+      let mockStatus = 'pending';
+      let mockAcceptedAt = null;
+      let mockReadyAt = null;
+      let mockScheduledFor = null;
+      
+      // For testing different statuses based on order ID
+      if (orderId.includes('12346')) {
+        mockStatus = 'accepted';
+        mockAcceptedAt = new Date(Date.now() - 15 * 60 * 1000).toISOString();
+      } else if (orderId.includes('12347')) {
+        mockStatus = 'ready';
+        mockAcceptedAt = new Date(Date.now() - 45 * 60 * 1000).toISOString();
+        mockReadyAt = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+      } else if (orderId.includes('12348')) {
+        mockStatus = 'scheduled';
+        // Schedule for 2 hours from now
+        mockScheduledFor = new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString();
+      }
+      
       const mockOrder = {
         id: orderId,
         customerName: 'John Smith',
         customerPhone: '(555) 123-4567',
         customerEmail: 'john.smith@email.com',
         deliveryAddress: '123 Main St, Apt 4B, New York, NY 10001',
-        status: 'pending', // Can be: pending, accepted, ready, scheduled
+        status: mockStatus,
         total: 45.99,
         subtotal: 39.99,
         tax: 3.00,
@@ -73,9 +93,9 @@ const OrderDetailPage = () => {
           { name: 'Coca Cola', quantity: 2, price: 2.50 }
         ],
         createdAt: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
-        acceptedAt: null,
-        readyAt: null,
-        scheduledFor: null,
+        acceptedAt: mockAcceptedAt,
+        readyAt: mockReadyAt,
+        scheduledFor: mockScheduledFor,
         prepTime: 20,
         specialInstructions: 'Please ring doorbell twice'
       };
