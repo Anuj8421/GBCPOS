@@ -30,7 +30,7 @@ const Sidebar = () => {
   const isActive = (path) => location.pathname === path || location.pathname.startsWith(path + '/');
 
   return (
-    <div className="w-64 bg-white border-r border-gray-200 flex flex-col" data-testid="sidebar">
+    <div className="w-64 bg-brand-navy border-r border-brand-navy flex flex-col" data-testid="sidebar">
       {/* Logo */}
       <div className="h-16 flex items-center justify-center border-b border-gray-200 px-4 bg-white">
         <img 
