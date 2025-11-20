@@ -39,23 +39,7 @@ const AuthPage = () => {
     setLoading(false);
   };
 
-  const handleRegister = async (e) => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
-
-    const result = await register(registerData);
-    
-    if (result.success) {
-      toast.success('Registration successful!');
-      navigate('/dashboard');
-    } else {
-      setError(result.error || 'Registration failed. Please try again.');
-      toast.error('Registration failed');
-    }
-    
-    setLoading(false);
-  };
+  // Registration removed - handled by website/PHP backend
 
   const handleGoogleLogin = async () => {
     setError('');
