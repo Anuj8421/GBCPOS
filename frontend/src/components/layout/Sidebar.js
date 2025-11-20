@@ -32,7 +32,7 @@ const Sidebar = () => {
   return (
     <div className="w-64 bg-brand-navy border-r border-brand-navy flex flex-col" data-testid="sidebar">
       {/* Logo */}
-      <div className="h-16 flex items-center justify-center border-b border-gray-200 px-4 bg-white">
+      <div className="h-16 flex items-center justify-center border-b border-white/10 px-4 bg-brand-navy">
         <img 
           src="/gbc-logo.png" 
           alt="GBC Logo" 
