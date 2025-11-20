@@ -27,6 +27,7 @@ import { addDays, format } from 'date-fns';
 import { cn } from '@/lib/utils';
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const [summary, setSummary] = useState(null);
   const [loading, setLoading] = useState(true);
   const [dateRange, setDateRange] = useState({
