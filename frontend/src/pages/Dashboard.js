@@ -490,7 +490,7 @@ const Dashboard = () => {
           <Button 
             variant="ghost" 
             size="sm"
-            onClick={() => navigate('/analytics?view=customers')}
+            onClick={() => navigate('/analytics/frequent-customers')}
             data-testid="view-all-customers-button"
           >
             View All →
