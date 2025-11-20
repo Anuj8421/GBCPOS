@@ -192,12 +192,138 @@ const Dashboard = () => {
     return colors[status] || 'bg-gray-100 text-gray-800';
   };
 
+  const getSyncStatusColor = () => {
+    switch (syncStatus) {
+      case 'synced':
+        return 'bg-green-100 text-green-800';
+      case 'delayed':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'disconnected':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const getSyncStatusIcon = () => {
+    switch (syncStatus) {
+      case 'synced':
+        return <RefreshCw className="w-3 h-3" />;
+      case 'delayed':
+        return <Clock className="w-3 h-3" />;
+      case 'disconnected':
+        return <AlertTriangle className="w-3 h-3" />;
+      default:
+        return <RefreshCw className="w-3 h-3" />;
+    }
+  };
+
   return (
     <div className="space-y-6" data-testid="dashboard-page">
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-gray-600 mt-1">Welcome back! Here's what's happening today.</p>
+      {/* Header with Date Range and Sync Status */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+          <p className="text-gray-600 mt-1">Monitor your restaurant performance</p>
+        </div>
+        
+        <div className="flex items-center gap-3">
+          {/* Date Range Picker */}
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className={cn(
+                  "justify-start text-left font-normal",
+                  !dateRange && "text-muted-foreground"
+                )}
+                data-testid="date-range-button"
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {dateRange?.from ? (
+                  dateRange.to ? (
+                    <>
+                      {format(dateRange.from, "LLL dd")} -{" "}
+                      {format(dateRange.to, "LLL dd, yyyy")}
+                    </>
+                  ) : (
+                    format(dateRange.from, "LLL dd, yyyy")
+                  )
+                ) : (
+                  <span>Pick a date range</span>
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="end">
+              <Calendar
+                initialFocus
+                mode="range"
+                defaultMonth={dateRange?.from}
+                selected={dateRange}
+                onSelect={setDateRange}
+                numberOfMonths={2}
+              />
+              <div className="p-3 border-t flex gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="flex-1"
+                  onClick={() => setDateRange({ from: new Date(), to: new Date() })}
+                >
+                  Today
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="flex-1"
+                  onClick={() => setDateRange({ 
+                    from: addDays(new Date(), -7), 
+                    to: new Date() 
+                  })}
+                >
+                  Last 7 Days
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="flex-1"
+                  onClick={() => setDateRange({ 
+                    from: addDays(new Date(), -30), 
+                    to: new Date() 
+                  })}
+                >
+                  Last 30 Days
+                </Button>
+              </div>
+            </PopoverContent>
+          </Popover>
+
+          {/* Refresh Button */}
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={handleRefresh}
+            disabled={loading}
+            data-testid="refresh-button"
+          >
+            <RefreshCw className={cn("w-4 h-4", loading && "animate-spin")} />
+          </Button>
+
+          {/* Sync Status */}
+          <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg" data-testid="sync-status">
+            <div className="flex flex-col items-end">
+              <Badge className={cn("text-xs", getSyncStatusColor())} data-testid="sync-status-badge">
+                <span className="flex items-center gap-1">
+                  {getSyncStatusIcon()}
+                  {syncStatus.charAt(0).toUpperCase() + syncStatus.slice(1)}
+                </span>
+              </Badge>
+              <span className="text-xs text-gray-500 mt-1">
+                {formatRelativeTime(lastSync)}
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Stats Grid */}
