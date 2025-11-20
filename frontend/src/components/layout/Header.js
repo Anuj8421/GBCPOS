@@ -28,9 +28,9 @@ const Header = () => {
   };
 
   return (
-    <>
-      {/* Fixed Logo Section */}
-      <div className="fixed top-0 left-0 w-64 h-16 bg-brand-orange z-50 flex items-center justify-center border-r border-brand-orange">
+    <header className="h-16 bg-brand-orange border-b border-brand-orange/80 flex items-center justify-between" data-testid="header">
+      {/* Logo Section */}
+      <div className="w-64 h-full flex items-center justify-center border-r border-white/20">
         <img 
           src="/gbc-logo-white.png" 
           alt="GBC Logo" 
@@ -38,9 +38,8 @@ const Header = () => {
         />
       </div>
 
-      {/* Header */}
-      <header className="h-16 bg-brand-orange border-b border-brand-orange/80 flex items-center justify-between px-4 pl-4 ml-64" data-testid="header">
       {/* Store Status */}
+      <div className="flex-1 flex items-center justify-between px-4">
       <div className="flex items-center space-x-3">
         <div className="flex items-center space-x-2">
           <span className="text-sm font-medium text-white">Store Status:</span>
