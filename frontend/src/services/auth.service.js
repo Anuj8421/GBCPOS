@@ -16,24 +16,10 @@ export const authService = {
   // Google OAuth authentication
   googleLogin: async (googleData) => {
     try {
-      // DEVELOPMENT MODE - Mock Google login
-      // TODO: Replace with actual PHP backend endpoint when available
-      
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
-      return {
-        token: 'mock-google-token-' + Date.now(),
-        user: {
-          id: 'user-google-' + Date.now(),
-          name: googleData.name || 'Google User',
-          email: googleData.email,
-          role: 'manager',
-          storeName: 'Google Restaurant',
-          storeId: 'store-google-001'
-        }
-      };
+      const response = await apiClient.post('/auth/google', googleData);
+      return response.data;
     } catch (error) {
-      throw new Error(error.response?.data?.message || 'Google login failed');
+      throw new Error(error.response?.data?.detail || 'Google login failed. Please try again.');
     }
   },
 
