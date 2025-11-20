@@ -607,6 +607,137 @@ const OrderDetailPage = () => {
               </CardContent>
             </Card>
           )}
+
+          {/* Details for DELIVERED Order */}
+          {order.status === 'delivered' && (
+            <Card data-testid="delivered-order-details" className="border-green-200">
+              <CardHeader>
+                <CardTitle className="text-green-700">✓ Order Delivered</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center py-2 border-b">
+                    <span className="text-sm font-medium text-gray-600">Delivered Time:</span>
+                    <span className="text-sm text-gray-900">{formatDateTime(order.deliveredAt)}</span>
+                  </div>
+                  <div className="flex justify-between items-center py-2 border-b">
+                    <span className="text-sm font-medium text-gray-600">Delivered By:</span>
+                    <span className="text-sm text-gray-900">{order.deliveredBy || 'Restaurant Driver'}</span>
+                  </div>
+                  <div className="flex justify-between items-center py-2 border-b">
+                    <span className="text-sm font-medium text-gray-600">OTP Verified:</span>
+                    <Badge variant={order.otpVerified ? 'default' : 'secondary'} className={order.otpVerified ? 'bg-green-500' : ''}>
+                      {order.otpVerified ? 'Yes' : 'No'}
+                    </Badge>
+                  </div>
+                  
+                  {order.deliveryNotes && (
+                    <div className="py-2 border-b">
+                      <p className="text-sm font-medium text-gray-600 mb-1">Delivery Notes:</p>
+                      <p className="text-sm text-gray-900">{order.deliveryNotes}</p>
+                    </div>
+                  )}
+                  
+                  {order.customerRating && (
+                    <div className="py-2 border-b">
+                      <p className="text-sm font-medium text-gray-600 mb-1">Customer Rating:</p>
+                      <div className="flex items-center gap-1">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <span key={star} className={`text-lg ${star <= order.customerRating ? 'text-yellow-400' : 'text-gray-300'}`}>
+                            ★
+                          </span>
+                        ))}
+                        <span className="ml-2 text-sm text-gray-600">({order.customerRating}/5)</span>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {order.customerReview && (
+                    <div className="py-2">
+                      <p className="text-sm font-medium text-gray-600 mb-1">Customer Review:</p>
+                      <p className="text-sm text-gray-700 italic">"{order.customerReview}"</p>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Details for CANCELLED Order */}
+          {order.status === 'cancelled' && (
+            <Card data-testid="cancelled-order-details" className="border-red-200">
+              <CardHeader>
+                <CardTitle className="text-red-700">✗ Order Cancelled</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center py-2 border-b">
+                    <span className="text-sm font-medium text-gray-600">Cancelled At:</span>
+                    <span className="text-sm text-gray-900">{formatDateTime(order.cancelledAt)}</span>
+                  </div>
+                  <div className="flex justify-between items-center py-2 border-b">
+                    <span className="text-sm font-medium text-gray-600">Who Cancelled:</span>
+                    <Badge variant="destructive" className="bg-red-100 text-red-800">
+                      {order.whoCancelled || 'Not specified'}
+                    </Badge>
+                  </div>
+                  <div className="py-2 border-b">
+                    <p className="text-sm font-medium text-gray-600 mb-1">Cancellation Reason:</p>
+                    <p className="text-sm text-gray-900">{order.cancellationReason || 'Not provided'}</p>
+                  </div>
+                </div>
+                <div className="bg-red-50 p-3 rounded-lg">
+                  <p className="text-xs text-red-800">
+                    This order was cancelled and cannot be reactivated. Customer has been notified.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Details for REFUNDED Order */}
+          {order.status === 'refunded' && (
+            <Card data-testid="refunded-order-details" className="border-gray-300">
+              <CardHeader>
+                <CardTitle className="text-gray-700">↺ Order Refunded</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center py-2 border-b">
+                    <span className="text-sm font-medium text-gray-600">Refunded At:</span>
+                    <span className="text-sm text-gray-900">{formatDateTime(order.refundedAt)}</span>
+                  </div>
+                  <div className="flex justify-between items-center py-2 border-b">
+                    <span className="text-sm font-medium text-gray-600">Refund Amount:</span>
+                    <span className="text-lg font-bold text-gray-900">{formatCurrency(order.refundAmount || order.total)}</span>
+                  </div>
+                  <div className="flex justify-between items-center py-2 border-b">
+                    <span className="text-sm font-medium text-gray-600">Refund Type:</span>
+                    <Badge variant="outline" className="bg-blue-50 text-blue-800">
+                      {order.refundType || 'Full refund'}
+                    </Badge>
+                  </div>
+                  <div className="flex justify-between items-center py-2 border-b">
+                    <span className="text-sm font-medium text-gray-600">Refund Method:</span>
+                    <span className="text-sm text-gray-900">{order.refundMethod || 'Back to card'}</span>
+                  </div>
+                  <div className="py-2 border-b">
+                    <p className="text-sm font-medium text-gray-600 mb-1">Refund Reason:</p>
+                    <p className="text-sm text-gray-900">{order.refundReason || 'Not specified'}</p>
+                  </div>
+                  <div className="flex justify-between items-center py-2">
+                    <span className="text-sm font-medium text-gray-600">Processed By:</span>
+                    <span className="text-sm text-gray-900">{order.refundProcessedBy || 'System Admin'}</span>
+                  </div>
+                </div>
+                <div className="bg-gray-50 p-3 rounded-lg">
+                  <p className="text-xs text-gray-700">
+                    This order has been refunded. The amount will be credited back to the customer within 5-7 business days.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
 
