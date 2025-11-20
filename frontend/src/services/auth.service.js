@@ -7,22 +7,7 @@ export const authService = {
       const response = await apiClient.post('/auth/login', { email, password });
       return response.data;
     } catch (error) {
-      // Fallback to mock for development if API fails
-      console.warn('Login API failed, using mock:', error.message);
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
-      return {
-        token: 'mock-jwt-token-' + Date.now(),
-        user: {
-          id: 'user-001',
-          name: email.split('@')[0].charAt(0).toUpperCase() + email.split('@')[0].slice(1),
-          email: email,
-          role: 'manager',
-          storeName: 'Test Restaurant',
-          storeId: 'store-001'
-        },
-        restaurant_id: 'restaurant_001'
-      };
+      throw new Error(error.response?.data?.detail || 'Invalid credentials. Please check your email and password.');
     }
   },
 
