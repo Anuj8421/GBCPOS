@@ -21,15 +21,6 @@ const AuthPage = () => {
     password: ''
   });
 
-  // Register form state
-  const [registerData, setRegisterData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    phone: '',
-    storeName: ''
-  });
-
   const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
