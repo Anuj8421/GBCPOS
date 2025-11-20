@@ -475,8 +475,16 @@ const Dashboard = () => {
 
       {/* Most Frequent Customers */}
       <Card data-testid="frequent-customers-card">
-        <CardHeader>
+        <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Most Frequent Customers</CardTitle>
+          <Button 
+            variant="ghost" 
+            size="sm"
+            onClick={() => navigate('/analytics?view=customers')}
+            data-testid="view-all-customers-button"
+          >
+            View All →
+          </Button>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
