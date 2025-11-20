@@ -16,6 +16,8 @@ import AnalyticsPage from '@/pages/AnalyticsPage';
 import FinancePage from '@/pages/FinancePage';
 import UsersPage from '@/pages/UsersPage';
 import SettingsPage from '@/pages/SettingsPage';
+import TopDishesPage from '@/pages/TopDishesPage';
+import FrequentCustomersPage from '@/pages/FrequentCustomersPage';
 import '@/App.css';
 
 function App() {
