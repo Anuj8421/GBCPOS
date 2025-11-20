@@ -32,7 +32,7 @@ const Header = () => {
       {/* Logo Section */}
       <div className="w-64 h-full flex items-center justify-center border-r border-white/20">
         <img 
-          src="/gbc-logo-dashboard.png" 
+          src="/gbc-logo-dashboard-v2.png" 
           alt="GBC Logo" 
           className="h-12 w-auto"
         />
