@@ -34,6 +34,7 @@ const OrderDetailPage = () => {
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [processing, setProcessing] = useState(false);
   const [selectedDriver, setSelectedDriver] = useState('');
+  const [showReceiptPreview, setShowReceiptPreview] = useState(false);
 
   // Mock driver list
   const drivers = [
