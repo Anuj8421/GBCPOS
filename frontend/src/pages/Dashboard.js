@@ -419,6 +419,113 @@ const Dashboard = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Top Sold Dishes Today */}
+      <Card data-testid="top-dishes-card">
+        <CardHeader>
+          <CardTitle>Top Sold Dishes Today</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {summary.topDishes.map((dish, index) => (
+              <div
+                key={index}
+                className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                data-testid={`top-dish-${index}`}
+              >
+                <div className="flex items-center space-x-4">
+                  <div className="relative">
+                    {dish.image ? (
+                      <img
+                        src={dish.image}
+                        alt={dish.name}
+                        className="w-16 h-16 object-cover rounded-lg"
+                      />
+                    ) : (
+                      <div className="w-16 h-16 bg-orange-100 rounded-lg flex items-center justify-center">
+                        <ChefHat className="w-8 h-8 text-orange-600" />
+                      </div>
+                    )}
+                    <div className="absolute -top-2 -left-2 w-6 h-6 bg-orange-600 text-white rounded-full flex items-center justify-center text-xs font-bold">
+                      {index + 1}
+                    </div>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-gray-900">{dish.name}</p>
+                    <p className="text-sm text-gray-600">{dish.orders} orders</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="font-bold text-gray-900">{formatCurrency(dish.revenue)}</p>
+                  <p className="text-xs text-gray-500">Revenue</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Most Frequent Customers */}
+      <Card data-testid="frequent-customers-card">
+        <CardHeader>
+          <CardTitle>Most Frequent Customers</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {summary.frequentCustomers.map((customer, index) => (
+              <div
+                key={index}
+                className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                data-testid={`frequent-customer-${index}`}
+              >
+                <div className="flex items-center space-x-4">
+                  <div className="relative">
+                    <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white font-bold">
+                      {customer.name.split(' ').map(n => n[0]).join('')}
+                    </div>
+                    <div className="absolute -top-1 -right-1 w-5 h-5 bg-orange-600 text-white rounded-full flex items-center justify-center text-xs font-bold">
+                      {index + 1}
+                    </div>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-gray-900">{customer.name}</p>
+                    <p className="text-sm text-gray-600">{customer.phone}</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="font-bold text-gray-900">{formatCurrency(customer.totalSpent)}</p>
+                  <p className="text-xs text-gray-500">{customer.orders} orders</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Report an Issue */}
+      <Card data-testid="report-issue-card">
+        <CardContent className="p-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-red-50 rounded-lg flex items-center justify-center">
+                <AlertTriangle className="w-5 h-5 text-red-600" />
+              </div>
+              <div>
+                <p className="font-semibold text-gray-900">Having issues with the app?</p>
+                <p className="text-sm text-gray-600">Report technical problems or request support</p>
+              </div>
+            </div>
+            <a
+              href="mailto:support@gbcanteen.com?subject=POS App Issue Report&body=Please describe your issue:"
+              className="flex items-center space-x-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
+              data-testid="report-issue-link"
+            >
+              <span className="font-medium">Report an Issue</span>
+              <ExternalLink className="w-4 h-4" />
+            </a>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };
