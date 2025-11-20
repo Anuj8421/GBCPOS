@@ -40,7 +40,7 @@ const Header = () => {
           />
           <Badge
             variant={storeStatus === 'open' ? 'default' : 'secondary'}
-            className={storeStatus === 'open' ? 'bg-green-500' : 'bg-gray-500'}
+            className={storeStatus === 'open' ? 'bg-green-600' : 'bg-gray-500'}
             data-testid="store-status-badge"
           >
             {storeStatus === 'open' ? 'Open' : 'Closed'}
