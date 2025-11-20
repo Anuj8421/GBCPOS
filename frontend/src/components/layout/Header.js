@@ -28,7 +28,7 @@ const Header = () => {
   };
 
   return (
-    <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4" data-testid="header">
+    <header className="h-16 bg-brand-orange border-b border-brand-orange/80 flex items-center justify-between px-4" data-testid="header">
       {/* Store Status */}
       <div className="flex items-center space-x-3">
         <div className="flex items-center space-x-2">
