@@ -11,31 +11,7 @@ export const authService = {
     }
   },
 
-  register: async (userData) => {
-    try {
-      // DEVELOPMENT MODE - Accept any registration
-      // TODO: Replace with actual PHP backend endpoint when available
-      
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Mock successful registration
-      return {
-        token: 'mock-jwt-token-' + Date.now(),
-        user: {
-          id: 'user-' + Date.now(),
-          name: userData.name,
-          email: userData.email,
-          phone: userData.phone,
-          role: 'manager',
-          storeName: userData.storeName,
-          storeId: 'store-' + Date.now()
-        }
-      };
-    } catch (error) {
-      throw new Error(error.response?.data?.message || 'Registration failed');
-    }
-  },
+  // Registration removed - handled by PHP backend/website
 
   // Google OAuth authentication
   googleLogin: async (googleData) => {
