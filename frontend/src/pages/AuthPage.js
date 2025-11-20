@@ -79,23 +79,27 @@ const AuthPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 to-orange-100 p-4">
-      <Card className="w-full max-w-md" data-testid="auth-card">
+    <div className="min-h-screen flex items-center justify-center bg-brand-navy p-4">
+      <Card className="w-full max-w-md border-brand-orange" data-testid="auth-card">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
-            <div className="w-16 h-16 bg-orange-600 rounded-full flex items-center justify-center">
-              <ChefHat className="w-10 h-10 text-white" />
-            </div>
+            <img 
+              src="/gbc-logo.png" 
+              alt="GBC Logo" 
+              className="h-24 w-auto"
+            />
           </div>
-          <CardTitle className="text-2xl font-bold">GBC POS</CardTitle>
-          <CardDescription>Restaurant Partner App</CardDescription>
+          <CardTitle className="text-2xl font-bold text-brand-navy">Restaurant Partner Login</CardTitle>
+          <CardDescription className="text-gray-600">Enter your credentials to access the POS system</CardDescription>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="login" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="login" data-testid="login-tab">Login</TabsTrigger>
-              <TabsTrigger value="register" data-testid="register-tab">Register</TabsTrigger>
-            </TabsList>
+          <form onSubmit={handleLogin} className="space-y-4"
+            data-testid="login-form">
+            {error && (
+              <Alert variant="destructive">
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
 
             {/* Login Tab */}
             <TabsContent value="login">
