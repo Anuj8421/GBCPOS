@@ -331,7 +331,7 @@ async def login(credentials: LoginRequest):
             
             if response.status_code != 200:
                 raise HTTPException(
-                    status_code=response.status_code,
+                    status_code=401,
                     detail="Invalid credentials"
                 )
             
@@ -352,10 +352,55 @@ async def login(credentials: LoginRequest):
     
     except httpx.RequestError as e:
         logger.error(f"Network error during login: {str(e)}")
-        raise HTTPException(status_code=503, detail="Authentication service unavailable")
+        raise HTTPException(status_code=503, detail="Authentication service unavailable. Please try again later.")
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Error during login: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="Login failed. Please contact support.")
+
+@api_router.post("/auth/google")
+async def google_login(google_data: dict):
+    """
+    Google OAuth login - proxy to PHP backend
+    """
+    try:
+        logger.info(f"Google login attempt")
+        
+        # Forward to PHP backend
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            response = await client.post(
+                f"{PHP_BACKEND_BASE_URL}/api/auth/google",
+                json=google_data,
+                headers={"Content-Type": "application/json"}
+            )
+            
+            if response.status_code != 200:
+                raise HTTPException(
+                    status_code=401,
+                    detail="Google authentication failed"
+                )
+            
+            php_response = response.json()
+            
+            # Store session
+            await db.sessions.insert_one({
+                "email": google_data.get('email'),
+                "auth_method": "google",
+                "restaurant_id": php_response.get('restaurant_id'),
+                "logged_in_at": datetime.now(timezone.utc).isoformat()
+            })
+            
+            return JSONResponse(status_code=200, content=php_response)
+    
+    except httpx.RequestError as e:
+        logger.error(f"Network error during Google login: {str(e)}")
+        raise HTTPException(status_code=503, detail="Authentication service unavailable")
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error during Google login: {str(e)}")
+        raise HTTPException(status_code=500, detail="Google login failed")
 
 # ==================== HEALTH CHECK ====================
 @api_router.get("/health")
