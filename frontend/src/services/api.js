@@ -1,12 +1,10 @@
 import axios from 'axios';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-
-// This will be replaced with actual PHP backend URL once provided
-const PHP_API_BASE = process.env.REACT_APP_PHP_API_URL || 'http://placeholder-api.local';
+const API_BASE = `${BACKEND_URL}/api`;
 
 const apiClient = axios.create({
-  baseURL: PHP_API_BASE,
+  baseURL: API_BASE,
   timeout: 30000,
   headers: {
     'Content-Type': 'application/json'
