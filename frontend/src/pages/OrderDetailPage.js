@@ -100,7 +100,8 @@ const OrderDetailPage = () => {
         })),
         acceptedAt: orderData.approvedAt,
         prepTime: null,
-        cancelledBy: orderData.cancelledBy || null
+        whoCancelled: orderData.cancelledBy || 'Restaurant',
+        cancellationReason: orderData.cancelReason || 'No reason provided'
       };
       
       setOrder(transformedOrder);
