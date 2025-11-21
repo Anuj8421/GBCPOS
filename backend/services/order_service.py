@@ -242,3 +242,113 @@ def get_dashboard_stats(restaurant_id: int, start_date: Optional[str] = None, en
             'completedOrders': 0,
             'cancelledOrders': 0
         }
+
+def get_top_dishes(restaurant_id: int, limit: int = 5, start_date: Optional[str] = None, end_date: Optional[str] = None) -> List[Dict]:
+    """
+    Get top selling dishes for a restaurant
+    """
+    try:
+        with get_mysql_connection() as conn:
+            with conn.cursor() as cursor:
+                # Default to today if no dates provided
+                if not start_date:
+                    start_date = datetime.now().strftime('%Y-%m-%d 00:00:00')
+                if not end_date:
+                    end_date = datetime.now().strftime('%Y-%m-%d 23:59:59')
+                
+                # Parse product_details JSON to count dishes
+                cursor.execute("""
+                    SELECT 
+                        product_details,
+                        total_amount
+                    FROM order_management
+                    WHERE restaurant_id = %s
+                    AND created_at BETWEEN %s AND %s
+                    AND fulfillment_status NOT IN ('cancelled', 'refunded')
+                """, (restaurant_id, start_date, end_date))
+                
+                orders = cursor.fetchall()
+                
+                # Aggregate dish data
+                dish_stats = {}
+                for order in orders:
+                    if order['product_details']:
+                        try:
+                            import json
+                            items = json.loads(order['product_details'])
+                            for item in items:
+                                dish_name = item.get('dish_name', 'Unknown')
+                                dish_image = item.get('dish_image', '')
+                                quantity = int(item.get('quantity', 1))
+                                price = float(item.get('unit_price', 0)) * quantity
+                                
+                                if dish_name not in dish_stats:
+                                    dish_stats[dish_name] = {
+                                        'name': dish_name,
+                                        'image': dish_image,
+                                        'orders': 0,
+                                        'revenue': 0
+                                    }
+                                
+                                dish_stats[dish_name]['orders'] += quantity
+                                dish_stats[dish_name]['revenue'] += price
+                        except Exception as e:
+                            logger.error(f"Error parsing product_details: {e}")
+                            continue
+                
+                # Sort by orders and return top N
+                top_dishes = sorted(dish_stats.values(), key=lambda x: x['orders'], reverse=True)[:limit]
+                return top_dishes
+                
+    except Exception as e:
+        logger.error(f"Error fetching top dishes: {str(e)}")
+        return []
+
+def get_frequent_customers(restaurant_id: int, limit: int = 5, start_date: Optional[str] = None, end_date: Optional[str] = None) -> List[Dict]:
+    """
+    Get most frequent customers for a restaurant
+    """
+    try:
+        with get_mysql_connection() as conn:
+            with conn.cursor() as cursor:
+                # Default to last 30 days if no dates provided
+                if not start_date:
+                    start_date = (datetime.now() - timedelta(days=30)).strftime('%Y-%m-%d 00:00:00')
+                if not end_date:
+                    end_date = datetime.now().strftime('%Y-%m-%d 23:59:59')
+                
+                cursor.execute("""
+                    SELECT 
+                        customer,
+                        customer_email,
+                        customer_phone,
+                        COUNT(*) as orders,
+                        COALESCE(SUM(CAST(total_amount AS DECIMAL(10,2))), 0) as total_spent
+                    FROM order_management
+                    WHERE restaurant_id = %s
+                    AND created_at BETWEEN %s AND %s
+                    AND fulfillment_status NOT IN ('cancelled', 'refunded')
+                    AND customer IS NOT NULL
+                    AND customer != ''
+                    GROUP BY customer, customer_email, customer_phone
+                    ORDER BY orders DESC, total_spent DESC
+                    LIMIT %s
+                """, (restaurant_id, start_date, end_date, limit))
+                
+                customers = cursor.fetchall()
+                
+                return [
+                    {
+                        'name': c['customer'],
+                        'email': c['customer_email'] or '',
+                        'phone': c['customer_phone'] or '',
+                        'orders': c['orders'],
+                        'totalSpent': float(c['total_spent'])
+                    }
+                    for c in customers
+                ]
+                
+    except Exception as e:
+        logger.error(f"Error fetching frequent customers: {str(e)}")
+        return []
+
