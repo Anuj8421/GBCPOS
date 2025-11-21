@@ -20,8 +20,14 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     try:
         # Handle different hash formats (bcrypt, md5, etc.)
         if hashed_password.startswith('$2'):
-            # Bcrypt hash
-            return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_password.encode('utf-8'))
+            # Bcrypt hash - PHP uses $2y$ but Python bcrypt uses $2b$
+            # They are compatible, just need to convert
+            hash_to_check = hashed_password
+            if hashed_password.startswith('$2y$'):
+                # Convert PHP's $2y$ to Python's $2b$ (they're compatible)
+                hash_to_check = '$2b$' + hashed_password[4:]
+            
+            return bcrypt.checkpw(plain_password.encode('utf-8'), hash_to_check.encode('utf-8'))
         else:
             # Plain text comparison (not recommended but some legacy systems use it)
             # Or MD5/SHA comparison
