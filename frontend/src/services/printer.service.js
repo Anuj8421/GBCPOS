@@ -1,5 +1,6 @@
 // iMin Printer Service for Swift 2 Pro
 // This service will interface with iMin's printer SDK
+import { receiptService } from './receipt.service';
 
 export const printerService = {
   // Check if printer is available
@@ -22,74 +23,82 @@ export const printerService = {
     }
   },
 
-  // Print kitchen receipt
+  // Print kitchen receipt using EXACT format from provided image
   printKitchenReceipt: async (order) => {
     try {
       if (!window.IminPrinter) {
-        console.log('Mock: Printing kitchen receipt for order', order.id);
-        return { success: true, mock: true };
+        // For web testing - use receipt service
+        return await receiptService.printKitchenReceipt(order);
       }
 
-      // Print header
-      await window.IminPrinter.setAlignment(1); // Center
-      await window.IminPrinter.setTextSize(32);
-      await window.IminPrinter.printText('KITCHEN ORDER\n\n');
+      // Get restaurant data (should be passed or fetched from context)
+      const restaurant = {
+        name: "The Curry Vault", // Dynamic from order data
+        address: "Restaurant Address"
+      };
       
-      // Print order details
-      await window.IminPrinter.setAlignment(0); // Left
-      await window.IminPrinter.setTextSize(24);
-      await window.IminPrinter.printText(`Order #${order.id}\n`);
-      await window.IminPrinter.printText(`Time: ${new Date(order.createdAt).toLocaleTimeString()}\n`);
-      await window.IminPrinter.printText('------------------------\n');
+      const receiptText = receiptService.generateKitchenReceipt(order, restaurant);
       
-      // Print items
-      for (const item of order.items) {
-        await window.IminPrinter.printText(`${item.quantity}x ${item.name}\n`);
-        if (item.modifiers && item.modifiers.length > 0) {
-          await window.IminPrinter.printText(`  Mods: ${item.modifiers.join(', ')}\n`);
+      // Print using iMin printer
+      await window.IminPrinter.setAlignment(1); // Center alignment for header
+      await window.IminPrinter.setTextSize(28);
+      
+      // Print the formatted receipt
+      const lines = receiptText.split('\n');
+      for (const line of lines) {
+        if (line.includes('GENERAL') || line.includes('BILIMORIA') || line.includes('Kitchen Receipt')) {
+          await window.IminPrinter.setAlignment(1); // Center
+        } else {
+          await window.IminPrinter.setAlignment(0); // Left
         }
-        if (item.notes) {
-          await window.IminPrinter.printText(`  Notes: ${item.notes}\n`);
-        }
+        await window.IminPrinter.printText(line + '\n');
       }
       
-      await window.IminPrinter.printText('\n\n\n');
       await window.IminPrinter.feedPaper(3);
-      
       return { success: true };
+      
     } catch (error) {
       console.error('Kitchen receipt print failed:', error);
       return { success: false, error: error.message };
     }
   },
 
-  // Print delivery bag sticker
+  // Print delivery receipt using EXACT format from provided image  
   printDeliverySticker: async (order) => {
     try {
       if (!window.IminPrinter) {
-        console.log('Mock: Printing delivery sticker for order', order.id);
-        return { success: true, mock: true };
+        // For web testing - use receipt service
+        return await receiptService.printDeliveryReceipt(order);
       }
 
-      await window.IminPrinter.setAlignment(1); // Center
+      // Get restaurant data
+      const restaurant = {
+        name: "The Curry Vault", // Dynamic from order data
+        address: "Restaurant Address"
+      };
+      
+      const receiptText = receiptService.generateDeliveryReceipt(order, restaurant);
+      
+      // Print using iMin printer
+      await window.IminPrinter.setAlignment(1); // Center alignment for header
       await window.IminPrinter.setTextSize(28);
-      await window.IminPrinter.printText('DELIVERY ORDER\n\n');
       
-      await window.IminPrinter.setAlignment(0); // Left
-      await window.IminPrinter.printText(`Order #${order.id}\n`);
-      await window.IminPrinter.printText(`Customer: ${order.customerName}\n`);
-      await window.IminPrinter.printText(`Phone: ${order.customerPhone}\n`);
-      await window.IminPrinter.printText(`\nAddress:\n${order.deliveryAddress}\n`);
-      await window.IminPrinter.printText('\n------------------------\n');
-      await window.IminPrinter.printText(`Items: ${order.items.length}\n`);
-      await window.IminPrinter.printText(`Total: $${order.total.toFixed(2)}\n`);
+      // Print the formatted receipt
+      const lines = receiptText.split('\n');
+      for (const line of lines) {
+        if (line.includes('GENERAL') || line.includes('BILIMORIA') || line.includes('Delivery Receipt')) {
+          await window.IminPrinter.setAlignment(1); // Center
+        } else {
+          await window.IminPrinter.setAlignment(0); // Left
+        }
+        await window.IminPrinter.printText(line + '\n');
+      }
       
-      await window.IminPrinter.printText('\n\n\n');
       await window.IminPrinter.feedPaper(3);
-      
       return { success: true };
+      
     } catch (error) {
-      console.error('Delivery sticker print failed:', error);
+      console.error('Delivery receipt print failed:', error);
       return { success: false, error: error.message };
     }
   },
