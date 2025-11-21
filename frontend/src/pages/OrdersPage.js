@@ -9,6 +9,7 @@ import { printerService } from '@/services/printer.service';
 import { useAuth } from '@/context/AuthContext';
 import { formatCurrency, formatRelativeTime } from '@/utils/helpers';
 import { ORDER_STATUS, ORDER_STATUS_LABELS, ORDER_STATUS_COLORS } from '@/utils/constants';
+import { notifyNewOrder, requestNotificationPermission } from '@/utils/notifications';
 import { Clock, Phone, MapPin, Package, Printer } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -17,6 +18,7 @@ const OrdersPage = () => {
   const restaurantId = user?.restaurant_id;
   const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
+  const [previousOrderCount, setPreviousOrderCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState(ORDER_STATUS.ALL);
 
