@@ -8,7 +8,7 @@ load_dotenv()
 
 logger = logging.getLogger(__name__)
 
-# MySQL Configuration
+# MySQL Configuration with timeouts and connection settings
 MYSQL_CONFIG = {
     'host': os.getenv('MYSQL_HOST'),
     'user': os.getenv('MYSQL_USER'),
@@ -16,7 +16,11 @@ MYSQL_CONFIG = {
     'database': os.getenv('MYSQL_DATABASE'),
     'port': int(os.getenv('MYSQL_PORT', 3306)),
     'charset': 'utf8mb4',
-    'cursorclass': pymysql.cursors.DictCursor
+    'cursorclass': pymysql.cursors.DictCursor,
+    'connect_timeout': 10,
+    'read_timeout': 30,
+    'write_timeout': 30,
+    'autocommit': True
 }
 
 @contextmanager
