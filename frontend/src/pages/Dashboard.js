@@ -406,6 +406,7 @@ const Dashboard = () => {
         <CardContent>
           <div className="grid grid-cols-2 gap-4">
             <button
+              onClick={() => navigate('/orders')}
               className="p-4 bg-orange-50 hover:bg-orange-100 rounded-lg text-left transition-colors"
               data-testid="view-pending-orders-button"
             >
@@ -414,6 +415,7 @@ const Dashboard = () => {
               <p className="text-sm text-gray-600 mt-1">{summary?.pendingOrders || 0} orders waiting</p>
             </button>
             <button
+              onClick={() => navigate('/menu')}
               className="p-4 bg-blue-50 hover:bg-blue-100 rounded-lg text-left transition-colors"
               data-testid="manage-menu-button"
             >
