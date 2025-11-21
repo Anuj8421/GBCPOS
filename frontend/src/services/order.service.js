@@ -16,7 +16,9 @@ export const orderService = {
   // Get order by order number
   getOrderByNumber: async (restaurantId, orderNumber) => {
     try {
-      const response = await apiClient.get(`/orders/detail/${orderNumber}`, {
+      // URL encode the order number to handle special characters like #
+      const encodedOrderNumber = encodeURIComponent(orderNumber);
+      const response = await apiClient.get(`/orders/detail/${encodedOrderNumber}`, {
         params: { restaurant_id: restaurantId }
       });
       return response.data;
