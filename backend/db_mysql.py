@@ -17,10 +17,9 @@ MYSQL_CONFIG = {
     'port': int(os.getenv('MYSQL_PORT', 3306)),
     'charset': 'utf8mb4',
     'cursorclass': pymysql.cursors.DictCursor,
-    'connect_timeout': 10,
-    'read_timeout': 30,
-    'write_timeout': 30,
-    'autocommit': True
+    'connect_timeout': 30,
+    'read_timeout': 60,
+    'write_timeout': 60
 }
 
 @contextmanager
