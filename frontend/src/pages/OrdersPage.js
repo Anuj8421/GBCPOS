@@ -80,6 +80,20 @@ const OrdersPage = () => {
         };
       });
       
+      // Check for new orders and notify
+      if (previousOrderCount > 0 && transformedOrders.length > previousOrderCount) {
+        const newOrders = transformedOrders.filter(order => 
+          order.status === 'pending' && 
+          !orders.find(o => o.id === order.id)
+        );
+        
+        // Notify for each new order
+        newOrders.forEach(order => {
+          notifyNewOrder(order.id, order.customerName, order.total);
+        });
+      }
+      
+      setPreviousOrderCount(transformedOrders.length);
       setOrders(transformedOrders);
     } catch (error) {
       console.error('Error fetching orders:', error);
