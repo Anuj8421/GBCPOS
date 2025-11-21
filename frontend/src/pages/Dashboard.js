@@ -61,8 +61,17 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
-    fetchDashboardData();
-  }, [dateRange]);
+    if (restaurantId) {
+      fetchDashboardData();
+      
+      // Auto-refresh dashboard every 60 seconds
+      const interval = setInterval(() => {
+        fetchDashboardData();
+      }, 60000);
+      
+      return () => clearInterval(interval);
+    }
+  }, [dateRange, restaurantId]);
 
   const fetchDashboardData = async () => {
     if (!restaurantId) return;
