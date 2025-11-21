@@ -32,6 +32,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { menuService } from '@/services/menu.service';
 import { formatCurrency } from '@/utils/helpers';
+import { useAuth } from '@/context/AuthContext';
 import { 
   Plus, 
   Search, 
@@ -48,7 +49,11 @@ import {
 import { toast } from 'sonner';
 
 const MenuPage = () => {
+  const { user } = useAuth();
+  const restaurantId = user?.restaurant_id;
+  
   const [menuItems, setMenuItems] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
