@@ -2,9 +2,11 @@ import { apiClient } from './api';
 
 export const menuService = {
   // Get all categories
-  getCategories: async () => {
+  getCategories: async (restaurantId) => {
     try {
-      const response = await apiClient.get('/menu/categories');
+      const response = await apiClient.get('/menu/categories', {
+        params: { restaurant_id: restaurantId }
+      });
       return response.data;
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Failed to fetch categories');
@@ -12,9 +14,11 @@ export const menuService = {
   },
 
   // Get all menu items
-  getMenuItems: async (categoryId = null) => {
+  getMenuItems: async (restaurantId, categoryId = null, search = null) => {
     try {
-      const params = categoryId ? { categoryId } : {};
+      const params = { restaurant_id: restaurantId };
+      if (categoryId) params.category = categoryId;
+      if (search) params.search = search;
       const response = await apiClient.get('/menu/items', { params });
       return response.data;
     } catch (error) {
