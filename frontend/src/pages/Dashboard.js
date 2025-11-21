@@ -497,32 +497,36 @@ const Dashboard = () => {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {summary.frequentCustomers.map((customer, index) => (
-              <div
-                key={index}
-                className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
-                data-testid={`frequent-customer-${index}`}
-              >
-                <div className="flex items-center space-x-4">
-                  <div className="relative">
-                    <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white font-bold">
-                      {customer.name.split(' ').map(n => n[0]).join('')}
+            {(summary?.frequentCustomers || []).length > 0 ? (
+              summary.frequentCustomers.map((customer, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                  data-testid={`frequent-customer-${index}`}
+                >
+                  <div className="flex items-center space-x-4">
+                    <div className="relative">
+                      <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white font-bold">
+                        {customer.name.split(' ').map(n => n[0]).join('')}
+                      </div>
+                      <div className="absolute -top-1 -right-1 w-5 h-5 bg-orange-600 text-white rounded-full flex items-center justify-center text-xs font-bold">
+                        {index + 1}
+                      </div>
                     </div>
-                    <div className="absolute -top-1 -right-1 w-5 h-5 bg-orange-600 text-white rounded-full flex items-center justify-center text-xs font-bold">
-                      {index + 1}
+                    <div>
+                      <p className="font-semibold text-gray-900">{customer.name}</p>
+                      <p className="text-sm text-gray-600">{customer.phone}</p>
                     </div>
                   </div>
-                  <div>
-                    <p className="font-semibold text-gray-900">{customer.name}</p>
-                    <p className="text-sm text-gray-600">{customer.phone}</p>
+                  <div className="text-right">
+                    <p className="font-bold text-gray-900">{formatCurrency(customer.totalSpent)}</p>
+                    <p className="text-xs text-gray-500">{customer.orders} orders</p>
                   </div>
                 </div>
-                <div className="text-right">
-                  <p className="font-bold text-gray-900">{formatCurrency(customer.totalSpent)}</p>
-                  <p className="text-xs text-gray-500">{customer.orders} orders</p>
-                </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              <p className="text-gray-500 text-center py-8">No frequent customers data yet</p>
+            )}
           </div>
         </CardContent>
       </Card>
