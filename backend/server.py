@@ -149,10 +149,43 @@ async def get_orders_by_restaurant(restaurant_id: str, status: Optional[str] = N
         logger.error(f"Error fetching orders: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# ==================== ORDER FETCHING FROM MYSQL ====================
+@api_router.get("/orders/list")
+async def get_restaurant_orders_list(restaurant_id: int, status: Optional[str] = None, limit: int = 100):
+    """
+    Get orders for a restaurant from MySQL database
+    Supports filtering by status
+    """
+    try:
+        from services.order_service import get_orders
+        orders = get_orders(restaurant_id, status, limit)
+        return JSONResponse(status_code=200, content={"orders": orders, "count": len(orders)})
+    except Exception as e:
+        logger.error(f"Error fetching orders: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/orders/detail/{order_number}")
+async def get_order_detail_mysql(order_number: str, restaurant_id: int):
+    """
+    Get detailed information for a specific order from MySQL
+    """
+    try:
+        from services.order_service import get_order_by_number
+        order = get_order_by_number(restaurant_id, order_number)
+        if order:
+            return JSONResponse(status_code=200, content=order)
+        else:
+            raise HTTPException(status_code=404, detail="Order not found")
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error fetching order detail: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @api_router.get("/orders/{order_number}")
 async def get_order_by_number(order_number: str):
     """
-    Get a specific order by order number
+    Get a specific order by order number (MongoDB - legacy)
     """
     try:
         order = await db.orders.find_one({"orderNumber": order_number})
