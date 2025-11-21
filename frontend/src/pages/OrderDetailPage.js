@@ -184,7 +184,8 @@ const OrderDetailPage = () => {
     
     try {
       setProcessing(true);
-      await orderService.updateOrderStatus(restaurantId, orderId, 'approved', user?.username || 'pos_app');
+      const orderNumber = orderId.startsWith('#') ? orderId : `#${orderId}`;
+      await orderService.updateOrderStatus(restaurantId, orderNumber, 'approved', user?.username || 'pos_app');
       
       // Print kitchen receipt automatically
       await printerService.printKitchenReceipt(order);
