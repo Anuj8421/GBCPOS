@@ -469,6 +469,72 @@ async def get_menu_categories(restaurant_id: int):
         logger.error(f"Error fetching menu categories: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+
+@api_router.post("/menu/items")
+async def create_menu_item(data: dict):
+    """
+    Create a new menu item with pending status
+    Requires approval before it goes live
+    """
+    try:
+        from db_mysql import get_mysql_connection
+        
+        restaurant_id = data.get('restaurant_id')
+        dish_name = data.get('dishName')
+        short_description = data.get('shortDescription', '')
+        detailed_description = data.get('detailedDescription', '')
+        selling_price = data.get('sellingPrice')
+        discount_price = data.get('discountPrice')
+        food_type = data.get('foodType', 'veg')
+        cuisine_type = data.get('cuisineType', '')
+        category = data.get('category', 'Uncategorized')
+        image = data.get('image', '')
+        
+        if not all([restaurant_id, dish_name, selling_price]):
+            raise HTTPException(status_code=400, detail="Missing required fields")
+        
+        with get_mysql_connection() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute("""
+                    INSERT INTO dishes (
+                        restaurant_id, name, slug, short_description, detailed_description,
+                        selling_price, discount_value, discount_type, primary_image,
+                        food_type, cuisine_type, tier_1, availability_status,
+                        is_active, is_deleted, approval_status, created_at, updated_at
+                    ) VALUES (
+                        %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW(), NOW()
+                    )
+                """, (
+                    restaurant_id,
+                    dish_name,
+                    dish_name.lower().replace(' ', '-'),
+                    short_description,
+                    detailed_description,
+                    selling_price,
+                    discount_price if discount_price else None,
+                    'flat' if discount_price else None,
+                    image,
+                    food_type,
+                    cuisine_type,
+                    category,
+                    'unavailable',  # Start as unavailable until approved
+                    0,  # is_active = 0 (not active)
+                    0,  # is_deleted = 0
+                    'pending'  # approval_status = pending
+                ))
+                conn.commit()
+                
+                logger.info(f"Menu item created with pending status: {dish_name}")
+                return JSONResponse(status_code=201, content={
+                    "message": "Item submitted for approval",
+                    "status": "pending"
+                })
+                
+    except Exception as e:
+        logger.error(f"Error creating menu item: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @api_router.patch("/menu/items/{dish_id}/availability")
 async def update_dish_availability(dish_id: int, restaurant_id: int, available: bool):
     """
