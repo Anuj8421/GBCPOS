@@ -757,6 +757,15 @@ const OrderDetailPage = () => {
                   </div>
                 </div>
                 <Button
+                  variant="outline"
+                  className="w-full mb-4"
+                  onClick={handlePrintSticker}
+                  data-testid="print-delivery-label-btn"
+                >
+                  <Tag className="w-4 h-4 mr-2" />
+                  Print Delivery Label
+                </Button>
+                <Button
                   className="w-full bg-green-600 hover:bg-green-700"
                   onClick={handleMarkPickedUp}
                   disabled={processing}
