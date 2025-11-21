@@ -316,13 +316,20 @@ const OrdersPage = () => {
                     {order.status === 'accepted' && (
                       <Button
                         className="w-full bg-blue-600 hover:bg-blue-700"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleViewDetails(order.id);
-                        }}
+                        onClick={(e) => handleMarkReady(order.id, e)}
                         data-testid={`mark-ready-${order.id}`}
                       >
                         Mark as Ready
+                      </Button>
+                    )}
+
+                    {order.status === 'ready' && (
+                      <Button
+                        className="w-full bg-purple-600 hover:bg-purple-700"
+                        onClick={(e) => handleDispatchOrder(order.id, e)}
+                        data-testid={`dispatch-order-${order.id}`}
+                      >
+                        Mark as Dispatched
                       </Button>
                     )}
                   </CardContent>
