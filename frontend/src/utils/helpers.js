@@ -1,10 +1,10 @@
 import { format, formatDistance, formatRelative } from 'date-fns';
 
-// Format currency
-export const formatCurrency = (amount) => {
-  return new Intl.NumberFormat('en-US', {
+// Format currency with configurable currency code
+export const formatCurrency = (amount, currencyCode = 'GBP') => {
+  return new Intl.NumberFormat('en-GB', {
     style: 'currency',
-    currency: 'USD'
+    currency: currencyCode
   }).format(amount);
 };
 
@@ -25,7 +25,15 @@ export const formatDateTime = (date) => {
 
 // Format relative time (e.g., "2 hours ago")
 export const formatRelativeTime = (date) => {
-  return formatDistance(new Date(date), new Date(), { addSuffix: true });
+  if (!date) return 'Unknown';
+  try {
+    const dateObj = new Date(date);
+    if (isNaN(dateObj.getTime())) return 'Invalid date';
+    return formatDistance(dateObj, new Date(), { addSuffix: true });
+  } catch (e) {
+    console.error('Error formatting relative time:', e);
+    return 'Unknown';
+  }
 };
 
 // Format phone number
