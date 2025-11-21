@@ -315,8 +315,8 @@ async def cancel_order(cancel: OrderCancel):
 @api_router.post("/auth/login")
 async def login(credentials: LoginRequest):
     """
-    Authenticate user against MySQL database
-    Returns JWT token and user data
+    Authenticate restaurant user against MySQL database
+    Returns JWT token and restaurant data
     """
     try:
         logger.info(f"Login attempt for: {credentials.email}")
@@ -324,38 +324,41 @@ async def login(credentials: LoginRequest):
         # Import auth module
         from auth import authenticate_user, create_access_token
         
-        # Authenticate against MySQL database
-        user_data = await authenticate_user(credentials.email, credentials.password)
+        # Authenticate against MySQL database (supports both username and email)
+        restaurant_data = await authenticate_user(credentials.email, credentials.password)
         
-        if not user_data:
+        if not restaurant_data:
             raise HTTPException(
                 status_code=401,
-                detail="Invalid credentials"
+                detail="Invalid credentials or restaurant not active"
             )
         
-        # Create JWT token
+        # Create JWT token with restaurant information
         token_data = {
-            "sub": user_data['email'],
-            "user_id": user_data['id'],
-            "restaurant_id": user_data.get('restaurant_id')
+            "sub": restaurant_data.get('email') or restaurant_data.get('username'),
+            "user_id": restaurant_data['id'],
+            "restaurant_id": restaurant_data['restaurant_id'],
+            "app_restaurant_uid": restaurant_data.get('app_restaurant_uid')
         }
         token = create_access_token(token_data)
         
         # Store session in MongoDB for tracking
         await db.sessions.insert_one({
-            "email": credentials.email,
-            "restaurant_id": user_data.get('restaurant_id'),
+            "username": restaurant_data.get('username'),
+            "email": restaurant_data.get('email'),
+            "restaurant_id": restaurant_data['restaurant_id'],
             "logged_in_at": datetime.now(timezone.utc).isoformat()
         })
         
-        logger.info(f"Login successful for: {credentials.email}")
+        logger.info(f"Login successful for restaurant: {restaurant_data.get('name')}")
         
         return JSONResponse(
             status_code=200,
             content={
                 "token": token,
-                "user": user_data,
-                "restaurant_id": user_data.get('restaurant_id')
+                "user": restaurant_data,
+                "restaurant": restaurant_data,
+                "restaurant_id": restaurant_data['restaurant_id']
             }
         )
     
