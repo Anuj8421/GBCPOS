@@ -11,6 +11,7 @@ import Dashboard from '@/pages/Dashboard';
 import OrdersPage from '@/pages/OrdersPage';
 import OrderDetailPage from '@/pages/OrderDetailPage';
 import MenuPage from '@/pages/MenuPage';
+import SearchPage from '@/pages/SearchPage';
 import StorePage from '@/pages/StorePage';
 import AnalyticsPage from '@/pages/AnalyticsPage';
 import FinancePage from '@/pages/FinancePage';
