@@ -80,20 +80,22 @@ const OrdersPage = () => {
         };
       });
       
-      // Check for new orders and notify
-      if (previousOrderCount > 0 && transformedOrders.length > previousOrderCount) {
+      // Check for new orders and notify (only if we had previous data)
+      if (knownOrderIds.size > 0) {
         const newOrders = transformedOrders.filter(order => 
           order.status === 'pending' && 
-          !orders.find(o => o.id === order.id)
+          !knownOrderIds.has(order.id)
         );
         
-        // Notify for each new order
+        // Notify for each genuinely new order
         newOrders.forEach(order => {
           notifyNewOrder(order.id, order.customerName, order.total);
         });
       }
       
-      setPreviousOrderCount(transformedOrders.length);
+      // Update known order IDs
+      const currentOrderIds = new Set(transformedOrders.map(o => o.id));
+      setKnownOrderIds(currentOrderIds);
       setOrders(transformedOrders);
     } catch (error) {
       console.error('Error fetching orders:', error);
