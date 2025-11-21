@@ -33,6 +33,8 @@ const OrderDetailPage = () => {
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [prepTime, setPrepTime] = useState(20);
+  const [editingPrepTime, setEditingPrepTime] = useState(false);
+  const [countdown, setCountdown] = useState(null);
   const [cancelReason, setCancelReason] = useState('');
   const [customCancelReason, setCustomCancelReason] = useState('');
   const [showCancelDialog, setShowCancelDialog] = useState(false);
