@@ -542,6 +542,34 @@ async def get_dashboard_statistics(restaurant_id: int, start_date: Optional[str]
         logger.error(f"Error fetching dashboard stats: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+
+@api_router.get("/dashboard/top-dishes")
+async def get_top_dishes_api(restaurant_id: int, limit: int = 5, start_date: Optional[str] = None, end_date: Optional[str] = None):
+    """
+    Get top selling dishes for dashboard
+    """
+    try:
+        from services.order_service import get_top_dishes
+        dishes = get_top_dishes(restaurant_id, limit, start_date, end_date)
+        return JSONResponse(status_code=200, content={"dishes": dishes})
+    except Exception as e:
+        logger.error(f"Error fetching top dishes: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/dashboard/frequent-customers")
+async def get_frequent_customers_api(restaurant_id: int, limit: int = 5, start_date: Optional[str] = None, end_date: Optional[str] = None):
+    """
+    Get most frequent customers for dashboard
+    """
+    try:
+        from services.order_service import get_frequent_customers
+        customers = get_frequent_customers(restaurant_id, limit, start_date, end_date)
+        return JSONResponse(status_code=200, content={"customers": customers})
+    except Exception as e:
+        logger.error(f"Error fetching frequent customers: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
     except Exception as e:
         logger.error(f"Error during Google login: {str(e)}")
         raise HTTPException(status_code=500, detail="Google login failed")
