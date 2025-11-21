@@ -407,6 +407,141 @@ async def google_login(google_data: dict):
         raise HTTPException(status_code=503, detail="Authentication service unavailable")
     except HTTPException:
         raise
+
+# ==================== MENU MANAGEMENT ====================
+@api_router.get("/menu/items")
+async def get_menu_items(restaurant_id: int, category: Optional[str] = None, search: Optional[str] = None):
+    """
+    Get menu items for a restaurant
+    Supports filtering by category and search
+    """
+    try:
+        from services.menu_service import get_menu_items
+        items = get_menu_items(restaurant_id, category, search)
+        return JSONResponse(status_code=200, content={"items": items, "count": len(items)})
+    except Exception as e:
+        logger.error(f"Error fetching menu items: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/menu/categories")
+async def get_menu_categories(restaurant_id: int):
+    """
+    Get menu categories for a restaurant
+    """
+    try:
+        from services.menu_service import get_menu_categories
+        categories = get_menu_categories(restaurant_id)
+        return JSONResponse(status_code=200, content={"categories": categories})
+    except Exception as e:
+        logger.error(f"Error fetching menu categories: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.patch("/menu/items/{dish_id}/availability")
+async def update_dish_availability(dish_id: int, restaurant_id: int, available: bool):
+    """
+    Update availability status for a dish
+    """
+    try:
+        from services.menu_service import update_dish_availability
+        success = update_dish_availability(dish_id, restaurant_id, available)
+        if success:
+            return JSONResponse(status_code=200, content={"message": "Availability updated"})
+        else:
+            raise HTTPException(status_code=500, detail="Failed to update availability")
+    except Exception as e:
+        logger.error(f"Error updating dish availability: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/menu/bulk-availability")
+async def bulk_update_availability(data: dict):
+    """
+    Bulk update availability for multiple dishes
+    Expected: {"restaurant_id": 123, "dish_ids": [1,2,3], "available": true}
+    """
+    try:
+        from services.menu_service import bulk_update_availability
+        restaurant_id = data.get('restaurant_id')
+        dish_ids = data.get('dish_ids', [])
+        available = data.get('available', True)
+        
+        success = bulk_update_availability(restaurant_id, dish_ids, available)
+        if success:
+            return JSONResponse(status_code=200, content={"message": f"Updated {len(dish_ids)} items"})
+        else:
+            raise HTTPException(status_code=500, detail="Failed to bulk update")
+    except Exception as e:
+        logger.error(f"Error bulk updating availability: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ==================== ORDER FETCHING FROM MYSQL ====================
+@api_router.get("/orders/list")
+async def get_restaurant_orders(restaurant_id: int, status: Optional[str] = None, limit: int = 100):
+    """
+    Get orders for a restaurant from MySQL database
+    Supports filtering by status
+    """
+    try:
+        from services.order_service import get_orders
+        orders = get_orders(restaurant_id, status, limit)
+        return JSONResponse(status_code=200, content={"orders": orders, "count": len(orders)})
+    except Exception as e:
+        logger.error(f"Error fetching orders: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/orders/detail/{order_number}")
+async def get_order_detail(order_number: str, restaurant_id: int):
+    """
+    Get detailed information for a specific order
+    """
+    try:
+        from services.order_service import get_order_by_number
+        order = get_order_by_number(restaurant_id, order_number)
+        if order:
+            return JSONResponse(status_code=200, content=order)
+        else:
+            raise HTTPException(status_code=404, detail="Order not found")
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error fetching order detail: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.patch("/orders/{order_number}/status")
+async def update_order_status_api(order_number: str, data: dict):
+    """
+    Update order status
+    Expected: {"restaurant_id": 123, "status": "approved", "updated_by": "user"}
+    """
+    try:
+        from services.order_service import update_order_status
+        restaurant_id = data.get('restaurant_id')
+        new_status = data.get('status')
+        updated_by = data.get('updated_by', 'system')
+        
+        success = update_order_status(restaurant_id, order_number, new_status, updated_by)
+        if success:
+            return JSONResponse(status_code=200, content={"message": "Order status updated"})
+        else:
+            raise HTTPException(status_code=500, detail="Failed to update order status")
+    except Exception as e:
+        logger.error(f"Error updating order status: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ==================== DASHBOARD STATISTICS ====================
+@api_router.get("/dashboard/stats")
+async def get_dashboard_statistics(restaurant_id: int, start_date: Optional[str] = None, end_date: Optional[str] = None):
+    """
+    Get dashboard statistics for a restaurant
+    Optionally filter by date range
+    """
+    try:
+        from services.order_service import get_dashboard_stats
+        stats = get_dashboard_stats(restaurant_id, start_date, end_date)
+        return JSONResponse(status_code=200, content=stats)
+    except Exception as e:
+        logger.error(f"Error fetching dashboard stats: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
     except Exception as e:
         logger.error(f"Error during Google login: {str(e)}")
         raise HTTPException(status_code=500, detail="Google login failed")
