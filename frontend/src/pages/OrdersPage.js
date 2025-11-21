@@ -26,6 +26,9 @@ const OrdersPage = () => {
     if (restaurantId) {
       fetchOrders(activeTab);
       
+      // Request notification permission on mount
+      requestNotificationPermission();
+      
       // Auto-refresh orders every 30 seconds
       const interval = setInterval(() => {
         fetchOrders(activeTab);
