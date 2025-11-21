@@ -79,6 +79,69 @@ const OrdersPage = () => {
   };
 
 
+  const handleAcceptOrder = async (orderId, e) => {
+    if (e) e.stopPropagation();
+    if (!restaurantId) return;
+    
+    try {
+      await orderService.updateOrderStatus(restaurantId, orderId, 'approved', user?.username || 'pos_app');
+      toast.success('Order accepted successfully');
+      // Refresh orders
+      fetchOrders(activeTab);
+    } catch (error) {
+      console.error('Error accepting order:', error);
+      toast.error('Failed to accept order');
+    }
+  };
+
+  const handleDeclineOrder = async (orderId, e) => {
+    if (e) e.stopPropagation();
+    if (!restaurantId) return;
+    
+    // TODO: Add a dialog to ask for cancellation reason
+    const reason = 'Restaurant declined';
+    
+    try {
+      await orderService.updateOrderStatus(restaurantId, orderId, 'cancelled', user?.username || 'pos_app');
+      toast.success('Order declined');
+      // Refresh orders
+      fetchOrders(activeTab);
+    } catch (error) {
+      console.error('Error declining order:', error);
+      toast.error('Failed to decline order');
+    }
+  };
+
+  const handleMarkReady = async (orderId, e) => {
+    if (e) e.stopPropagation();
+    if (!restaurantId) return;
+    
+    try {
+      await orderService.updateOrderStatus(restaurantId, orderId, 'ready', user?.username || 'pos_app');
+      toast.success('Order marked as ready');
+      // Refresh orders
+      fetchOrders(activeTab);
+    } catch (error) {
+      console.error('Error marking order ready:', error);
+      toast.error('Failed to mark order as ready');
+    }
+  };
+
+  const handleDispatchOrder = async (orderId, e) => {
+    if (e) e.stopPropagation();
+    if (!restaurantId) return;
+    
+    try {
+      await orderService.updateOrderStatus(restaurantId, orderId, 'dispatched', user?.username || 'pos_app');
+      toast.success('Order dispatched');
+      // Refresh orders
+      fetchOrders(activeTab);
+    } catch (error) {
+      console.error('Error dispatching order:', error);
+      toast.error('Failed to dispatch order');
+    }
+  };
+
   const handlePrintKitchenReceipt = async (order) => {
     const result = await printerService.printKitchenReceipt(order);
     if (result.success) {
