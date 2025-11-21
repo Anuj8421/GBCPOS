@@ -2,20 +2,23 @@ import { apiClient } from './api';
 
 export const orderService = {
   // Get all orders with optional status filter
-  getOrders: async (status = null) => {
+  getOrders: async (restaurantId, status = null, limit = 100) => {
     try {
-      const params = status ? { status } : {};
-      const response = await apiClient.get('/orders', { params });
+      const params = { restaurant_id: restaurantId, limit };
+      if (status) params.status = status;
+      const response = await apiClient.get('/orders/list', { params });
       return response.data;
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Failed to fetch orders');
     }
   },
 
-  // Get order by ID
-  getOrderById: async (orderId) => {
+  // Get order by order number
+  getOrderByNumber: async (restaurantId, orderNumber) => {
     try {
-      const response = await apiClient.get(`/orders/${orderId}`);
+      const response = await apiClient.get(`/orders/detail/${orderNumber}`, {
+        params: { restaurant_id: restaurantId }
+      });
       return response.data;
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Failed to fetch order');
