@@ -148,17 +148,21 @@ const MenuPage = () => {
   };
 
   const handleToggleAvailability = async (itemId, currentStatus) => {
+    if (!restaurantId) return;
+    
     try {
-      const newStatus = currentStatus === 'available' ? 'unavailable' : 'available';
-      // await menuService.toggleItemAvailability(itemId, newStatus === 'available');
+      const newAvailable = currentStatus !== 'available';
+      await menuService.toggleItemAvailability(itemId, restaurantId, newAvailable);
       
+      // Update local state
       setMenuItems(items => 
         items.map(item => 
-          item.id === itemId ? { ...item, availability: newStatus } : item
+          item.id === itemId ? { ...item, availability: newAvailable ? 'available' : 'unavailable' } : item
         )
       );
       toast.success('Availability updated');
     } catch (error) {
+      console.error('Error updating availability:', error);
       toast.error('Failed to update availability');
     }
   };
