@@ -79,70 +79,65 @@ const MenuPage = () => {
     image: null
   });
 
-  // Mock data
+  // Fetch menu items and categories
   useEffect(() => {
-    fetchMenuItems();
-  }, []);
+    if (restaurantId) {
+      fetchMenuItems();
+      fetchCategories();
+    }
+  }, [restaurantId, selectedCategory, searchQuery]);
 
   const fetchMenuItems = async () => {
+    if (!restaurantId) return;
+    
     try {
-      // Mock data - will be replaced with real API
-      const mockItems = [
-        {
-          id: 1,
-          name: 'Paneer Tikka Masala',
-          shortDescription: 'Marinated paneer in rich tomato gravy',
-          price: 41.40,
-          discountPrice: null,
-          category: 'GBC Specialities',
-          image: 'https://storage.googleapis.com/food_order_php_app/dishes/68c86a47a3ac4_Paneer_Tikka_Masala-removebg-preview.jpg',
-          foodType: 'veg',
-          availability: 'available',
-          tags: ['bestseller', 'spicy'],
-          allergens: ['Sesame', 'Celery', 'Mustard'],
-          halalCertified: false,
-          cuisineType: 'Indian'
-        },
-        {
-          id: 2,
-          name: 'Vegetable Masala',
-          shortDescription: 'Seasonal vegetables in mild creamy sauce',
-          price: 10.20,
-          discountPrice: 8.50,
-          category: 'GBC Specialities',
-          image: 'https://storage.googleapis.com/food_order_php_app/dishes/68c86959c4af2_Vegetable_Masala-removebg-preview.jpg',
-          foodType: 'veg',
-          availability: 'available',
-          tags: ['new'],
-          allergens: ['Sesame'],
-          halalCertified: true,
-          cuisineType: 'Indian'
-        },
-        {
-          id: 3,
-          name: 'Butter Chicken',
-          shortDescription: 'Tender chicken in butter gravy',
-          price: 45.00,
-          discountPrice: null,
-          category: 'Mains',
-          image: null,
-          foodType: 'non-veg',
-          availability: 'unavailable',
-          tags: ['bestseller', 'chef-special'],
-          allergens: ['Milk', 'Nuts'],
-          halalCertified: true,
-          cuisineType: 'Indian'
-        }
-      ];
-      setMenuItems(mockItems);
+      setLoading(true);
+      const categoryFilter = selectedCategory !== 'all' ? selectedCategory : null;
+      const searchFilter = searchQuery || null;
+      const response = await menuService.getMenuItems(restaurantId, categoryFilter, searchFilter);
+      
+      // Transform API data to match component expectations
+      const transformedItems = response.items.map(item => ({
+        id: item.id,
+        name: item.name,
+        shortDescription: item.description,
+        detailedDescription: item.detailed_description,
+        price: item.price,
+        discountPrice: item.final_price !== item.price ? item.final_price : null,
+        category: item.category,
+        image: item.image,
+        foodType: item.food_type,
+        availability: item.available ? 'available' : 'unavailable',
+        tags: typeof item.tags === 'string' ? JSON.parse(item.tags) : item.tags,
+        allergens: [],
+        halalCertified: false,
+        cuisineType: item.cuisine_type,
+        mark_as: item.mark_as,
+        rating: item.rating,
+        reviews: item.reviews
+      }));
+      
+      setMenuItems(transformedItems);
     } catch (error) {
+      console.error('Error fetching menu items:', error);
       toast.error('Failed to load menu items');
     } finally {
       setLoading(false);
     }
   };
 
-  const categories = ['all', 'GBC Specialities', 'Starters', 'Mains', 'Desserts', 'Drinks'];
+  const fetchCategories = async () => {
+    if (!restaurantId) return;
+    
+    try {
+      const response = await menuService.getCategories(restaurantId);
+      const categoryNames = ['all', ...response.categories.map(cat => cat.name)];
+      setCategories(categoryNames);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+      setCategories(['all']);
+    }
+  };
   const availabilityOptions = ['all', 'available', 'unavailable', 'out-of-stock'];
   const dietaryOptions = ['all', 'veg', 'non-veg', 'vegan', 'gluten-free'];
   const tagOptions = ['all', 'bestseller', 'new', 'chef-special', 'trending', 'seasonal'];
