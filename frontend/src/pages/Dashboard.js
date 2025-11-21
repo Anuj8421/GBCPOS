@@ -65,45 +65,40 @@ const Dashboard = () => {
   }, [dateRange]);
 
   const fetchDashboardData = async () => {
+    if (!restaurantId) return;
+    
     try {
       setLoading(true);
-      // const data = await analyticsService.getDashboardSummary(dateRange);
-      // setSummary(data);
       
-      // Calculate days difference for dynamic data
-      const daysDiff = dateRange.to 
-        ? Math.ceil((dateRange.to - dateRange.from) / (1000 * 60 * 60 * 24)) + 1
-        : 1;
+      // Format dates for API
+      const startDate = dateRange.from ? format(dateRange.from, 'yyyy-MM-dd 00:00:00') : null;
+      const endDate = dateRange.to ? format(dateRange.to, 'yyyy-MM-dd 23:59:59') : null;
       
-      // Mock data that changes based on date range
-      const baseOrdersPerDay = 16;
-      const baseSalesPerDay = 417;
+      // Fetch dashboard stats
+      const statsData = await orderService.getDashboardStats(restaurantId, startDate, endDate);
+      setStats(statsData);
       
+      // Fetch recent orders (limit to 10)
+      const ordersData = await orderService.getOrders(restaurantId, null, 10);
+      setRecentOrders(ordersData.orders || []);
+      
+      // Build summary data
       setSummary({
-        todaySales: baseSalesPerDay * daysDiff,
-        todayOrders: baseOrdersPerDay * daysDiff,
-        pendingOrders: 5,
-        avgPrepTime: 18,
-        completionRate: 95,
-        avgRating: 4.7,
-        activeCustomers: 156,
-        recentOrders: [
-          {
-            id: 'ORD12345',
-            customerName: 'John Smith',
-            status: 'pending',
-            total: 45.99,
-            createdAt: new Date(Date.now() - 5 * 60 * 1000).toISOString()
-          },
-          {
-            id: 'ORD12346',
-            customerName: 'Sarah Johnson',
-            status: 'accepted',
-            total: 32.50,
-            createdAt: new Date(Date.now() - 12 * 60 * 1000).toISOString()
-          },
-          {
-            id: 'ORD12347',
+        todaySales: statsData.totalRevenue || 0,
+        todayOrders: statsData.totalOrders || 0,
+        pendingOrders: statsData.pendingOrders || 0,
+        avgPrepTime: 18, // This would need to be calculated from order data
+        completionRate: statsData.totalOrders > 0 
+          ? Math.round((statsData.completedOrders / statsData.totalOrders) * 100)
+          : 0,
+        avgRating: 4.7, // This would come from reviews table
+        activeCustomers: 0, // This would need to be counted from unique customers
+        recentOrders: ordersData.orders?.slice(0, 3).map(order => ({
+          id: order.orderNumber,
+          customerName: order.customer?.name || 'Guest',
+          status: order.status,
+          total: order.amount,
+          createdAt: order.createdAt
             customerName: 'Mike Davis',
             status: 'ready',
             total: 67.25,
