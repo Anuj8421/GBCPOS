@@ -67,6 +67,32 @@ const OrderDetailPage = () => {
     }
   }, [orderId, restaurantId]);
 
+  // Countdown timer for accepted orders
+  useEffect(() => {
+    let interval = null;
+    if (order?.status === 'approved' && order?.acceptedAt && prepTime > 0) {
+      const acceptedTime = new Date(order.acceptedAt).getTime();
+      const expectedReadyTime = acceptedTime + (prepTime * 60 * 1000);
+      
+      interval = setInterval(() => {
+        const now = Date.now();
+        const timeLeft = expectedReadyTime - now;
+        
+        if (timeLeft <= 0) {
+          setCountdown('Ready!');
+        } else {
+          const minutes = Math.floor(timeLeft / 60000);
+          const seconds = Math.floor((timeLeft % 60000) / 1000);
+          setCountdown(`${minutes}:${seconds.toString().padStart(2, '0')}`);
+        }
+      }, 1000);
+    }
+    
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [order?.status, order?.acceptedAt, prepTime]);
+
   const fetchOrderDetails = async () => {
     if (!restaurantId) return;
     
