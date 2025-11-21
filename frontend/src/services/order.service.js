@@ -48,7 +48,9 @@ export const orderService = {
   // Update order status
   updateOrderStatus: async (restaurantId, orderNumber, status, updatedBy = 'pos_app') => {
     try {
-      const response = await apiClient.patch(`/orders/${orderNumber}/status`, {
+      // URL encode the order number to handle special characters like #
+      const encodedOrderNumber = encodeURIComponent(orderNumber);
+      const response = await apiClient.patch(`/orders/${encodedOrderNumber}/status`, {
         restaurant_id: restaurantId,
         status,
         updated_by: updatedBy
