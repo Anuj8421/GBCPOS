@@ -36,10 +36,13 @@ export const menuService = {
     }
   },
 
-  // Create menu item
-  createMenuItem: async (itemData) => {
+  // Create menu item (will be pending until approved)
+  createMenuItem: async (restaurantId, itemData) => {
     try {
-      const response = await apiClient.post('/menu/items', itemData);
+      const response = await apiClient.post('/menu/items', {
+        restaurant_id: restaurantId,
+        ...itemData
+      });
       return response.data;
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Failed to create menu item');
