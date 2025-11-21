@@ -18,7 +18,7 @@ const OrdersPage = () => {
   const restaurantId = user?.restaurant_id;
   const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
-  const [previousOrderCount, setPreviousOrderCount] = useState(0);
+  const [knownOrderIds, setKnownOrderIds] = useState(new Set());
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState(ORDER_STATUS.ALL);
 
