@@ -49,8 +49,21 @@ const OrderDetailPage = () => {
 
   const fetchOrderDetails = async () => {
     try {
-      // Mock data - will be replaced with real API
-      // Determine status based on order ID for testing
+      setLoading(true);
+      const restaurantId = localStorage.getItem('restaurantId') || 196; // Get from auth context
+      const orderData = await orderService.getOrderByNumber(restaurantId, orderId);
+      
+      if (!orderData) {
+        toast.error('Order not found');
+        navigate('/orders');
+        return;
+      }
+      
+      setOrder(orderData);
+      setLoading(false);
+      return;
+      
+      // OLD MOCK DATA - keeping for reference
       let mockStatus = 'pending';
       let mockAcceptedAt = null;
       let mockReadyAt = null;
