@@ -472,9 +472,24 @@ const OrderDetailPage = () => {
                           {item.quantity}x {item.name}
                         </span>
                       </div>
+                      {item.bundleItems && item.bundleItems.length > 0 && (
+                        <div className="ml-4 mt-2 p-2 bg-gray-50 rounded">
+                          <p className="text-xs font-medium text-gray-700 mb-1">Bundle includes:</p>
+                          {item.bundleItems.map((bundleItem, bIdx) => (
+                            <p key={bIdx} className="text-xs text-gray-600">
+                              • {bundleItem.quantity}x {bundleItem.name}
+                            </p>
+                          ))}
+                        </div>
+                      )}
                       {item.modifiers && item.modifiers.length > 0 && (
                         <p className="text-sm text-gray-600 mt-1">
                           Modifiers: {item.modifiers.join(', ')}
+                        </p>
+                      )}
+                      {item.notes && (
+                        <p className="text-sm text-orange-600 mt-1 font-medium">
+                          📝 Note: {item.notes}
                         </p>
                       )}
                       {item.notes && (
