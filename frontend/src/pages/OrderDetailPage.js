@@ -375,7 +375,7 @@ const OrderDetailPage = () => {
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Order {order.id}</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Order {order.orderNumber}</h1>
             <p className="text-gray-600 mt-1">{formatRelativeTime(order.createdAt)}</p>
           </div>
         </div>
