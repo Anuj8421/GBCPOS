@@ -6,29 +6,81 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { orderService } from '@/services/order.service';
 import { printerService } from '@/services/printer.service';
+import { useAuth } from '@/context/AuthContext';
 import { formatCurrency, formatRelativeTime } from '@/utils/helpers';
 import { ORDER_STATUS, ORDER_STATUS_LABELS, ORDER_STATUS_COLORS } from '@/utils/constants';
 import { Clock, Phone, MapPin, Package, Printer } from 'lucide-react';
 import { toast } from 'sonner';
 
 const OrdersPage = () => {
+  const { user } = useAuth();
+  const restaurantId = user?.restaurant_id;
   const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState(ORDER_STATUS.ALL);
 
   useEffect(() => {
-    fetchOrders(activeTab);
-  }, [activeTab]);
+    if (restaurantId) {
+      fetchOrders(activeTab);
+    }
+  }, [activeTab, restaurantId]);
 
   const fetchOrders = async (status) => {
+    if (!restaurantId) return;
+    
     try {
       setLoading(true);
-      // const data = await orderService.getOrders(status === ORDER_STATUS.ALL ? null : status);
-      // setOrders(data);
+      const statusFilter = status === ORDER_STATUS.ALL ? null : status;
+      const response = await orderService.getOrders(restaurantId, statusFilter, 100);
+      
+      // Transform API data to match component expectations
+      const transformedOrders = (response.orders || []).map(order => {
+        // Parse items if it's a JSON string
+        let items = [];
+        try {
+          items = typeof order.items === 'string' ? JSON.parse(order.items) : order.items;
+        } catch (e) {
+          console.error('Error parsing order items:', e);
+        }
+        
+        return {
+          id: order.orderNumber,
+          customerName: order.customer?.name || 'Guest',
+          customerPhone: order.customer?.phone || '',
+          deliveryAddress: order.customer?.address || '',
+          status: order.status,
+          total: order.amount,
+          subtotal: order.amount, // Calculate properly if you have breakdown
+          tax: 0,
+          deliveryFee: 0,
+          items: items.map(item => ({
+            name: item.dish_name || item.name || 'Item',
+            quantity: item.quantity || 1,
+            price: parseFloat(item.unit_price || item.price || 0),
+            modifiers: item.customizations || []
+          })),
+          createdAt: order.createdAt,
+          acceptedAt: order.approvedAt,
+          readyAt: order.readyAt,
+          dispatchedAt: order.dispatchedAt,
+          prepTime: null
+        };
+      });
+      
+      setOrders(transformedOrders);
+    } catch (error) {
+      console.error('Error fetching orders:', error);
+      toast.error('Failed to load orders');
+      setOrders([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-      // Mock data - will be replaced with real PHP backend data
-      const mockOrders = [
+  // Keep original mock data as fallback - REMOVE THIS SECTION
+  const loadMockOrders = () => {
+    const mockOrders = [
         {
           id: 'ORD12345',
           customerName: 'John Smith',
