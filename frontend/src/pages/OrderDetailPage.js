@@ -725,15 +725,6 @@ const OrderDetailPage = () => {
                   <Printer className="w-4 h-4 mr-2" />
                   Print Kitchen Receipt
                 </Button>
-                <Button
-                  variant="outline"
-                  className="w-full"
-                  onClick={handlePrintSticker}
-                  data-testid="print-sticker-btn"
-                >
-                  <Tag className="w-4 h-4 mr-2" />
-                  Print Sticker (Delivery Label)
-                </Button>
               </CardContent>
             </Card>
           )}
