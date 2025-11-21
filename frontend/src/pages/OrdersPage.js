@@ -178,7 +178,9 @@ const OrdersPage = () => {
   };
 
   const handleViewDetails = (orderId) => {
-    navigate(`/orders/${orderId}`);
+    // Remove # if present for URL routing
+    const cleanOrderId = orderId.replace('#', '');
+    navigate(`/orders/${cleanOrderId}`);
   };
 
   const getStatusCount = (status) => {
