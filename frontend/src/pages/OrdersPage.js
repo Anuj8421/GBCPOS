@@ -23,6 +23,13 @@ const OrdersPage = () => {
   useEffect(() => {
     if (restaurantId) {
       fetchOrders(activeTab);
+      
+      // Auto-refresh orders every 30 seconds
+      const interval = setInterval(() => {
+        fetchOrders(activeTab);
+      }, 30000);
+      
+      return () => clearInterval(interval);
     }
   }, [activeTab, restaurantId]);
 
