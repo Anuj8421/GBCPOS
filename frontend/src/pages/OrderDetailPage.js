@@ -51,15 +51,26 @@ const OrderDetailPage = () => {
   }, [orderId]);
 
   const fetchOrderDetails = async () => {
+    if (!restaurantId) return;
+    
     try {
       setLoading(true);
-      const restaurantId = localStorage.getItem('restaurantId') || 196; // Get from auth context
       const orderData = await orderService.getOrderByNumber(restaurantId, orderId);
       
       if (!orderData) {
         toast.error('Order not found');
         navigate('/orders');
         return;
+      }
+      
+      // Parse items if they're a JSON string
+      if (typeof orderData.items === 'string') {
+        try {
+          orderData.items = JSON.parse(orderData.items);
+        } catch (e) {
+          console.error('Error parsing items:', e);
+          orderData.items = [];
+        }
       }
       
       setOrder(orderData);
