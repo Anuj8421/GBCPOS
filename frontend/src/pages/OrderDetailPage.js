@@ -973,21 +973,42 @@ const OrderDetailPage = () => {
 
       {/* Cancel Dialog */}
       <AlertDialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
-        <AlertDialogContent>
+        <AlertDialogContent className="max-w-md">
           <AlertDialogHeader>
             <AlertDialogTitle>Decline Order</AlertDialogTitle>
             <AlertDialogDescription>
-              Please provide a reason for declining this order.
+              Please select a reason for declining this order.
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <div className="py-4">
-            <Textarea
-              placeholder="Reason for cancellation..."
-              value={cancelReason}
-              onChange={(e) => setCancelReason(e.target.value)}
-              rows={4}
-              data-testid="cancel-reason-textarea"
-            />
+          <div className="py-4 space-y-4">
+            <div>
+              <Label htmlFor="cancel-reason">Cancellation Reason</Label>
+              <Select value={cancelReason} onValueChange={setCancelReason}>
+                <SelectTrigger id="cancel-reason" data-testid="cancel-reason-select">
+                  <SelectValue placeholder="Select a reason" />
+                </SelectTrigger>
+                <SelectContent>
+                  {cancelReasons.map((reason) => (
+                    <SelectItem key={reason} value={reason}>
+                      {reason}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            {cancelReason === 'Other' && (
+              <div>
+                <Label htmlFor="custom-reason">Custom Reason</Label>
+                <Textarea
+                  id="custom-reason"
+                  placeholder="Please specify the reason..."
+                  value={customCancelReason}
+                  onChange={(e) => setCustomCancelReason(e.target.value)}
+                  rows={3}
+                  data-testid="custom-cancel-reason-textarea"
+                />
+              </div>
+            )}
           </div>
           <AlertDialogFooter>
             <AlertDialogCancel data-testid="cancel-dialog-cancel">Cancel</AlertDialogCancel>
@@ -995,8 +1016,9 @@ const OrderDetailPage = () => {
               onClick={handleDeclineOrder}
               className="bg-red-600 hover:bg-red-700"
               data-testid="cancel-dialog-confirm"
+              disabled={processing}
             >
-              Decline Order
+              {processing ? 'Declining...' : 'Decline Order'}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
