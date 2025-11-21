@@ -55,7 +55,9 @@ const OrderDetailPage = () => {
     
     try {
       setLoading(true);
-      const orderData = await orderService.getOrderByNumber(restaurantId, orderId);
+      // Add # prefix if not present (orderId from URL doesn't have it)
+      const orderNumber = orderId.startsWith('#') ? orderId : `#${orderId}`;
+      const orderData = await orderService.getOrderByNumber(restaurantId, orderNumber);
       
       if (!orderData) {
         toast.error('Order not found');
