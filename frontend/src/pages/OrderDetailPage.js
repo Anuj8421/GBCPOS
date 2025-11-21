@@ -650,22 +650,63 @@ const OrderDetailPage = () => {
                 <CardTitle>Order in Progress</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
+                {/* Countdown Timer */}
+                {countdown && (
+                  <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-blue-700">Estimated Ready Time</p>
+                        <p className="text-xs text-blue-600">Started {formatRelativeTime(order.acceptedAt)}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className={`text-2xl font-bold ${countdown === 'Ready!' ? 'text-green-600' : 'text-blue-600'}`}>
+                          {countdown}
+                        </p>
+                        <p className="text-xs text-blue-600">{countdown === 'Ready!' ? 'Order should be ready!' : 'remaining'}</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
+                {/* Prep Time Editing */}
                 <div>
-                  <Label htmlFor="prep-time-edit">Change Prep Time (minutes)</Label>
-                  <div className="flex gap-2">
-                    <Input
-                      id="prep-time-edit"
-                      type="number"
-                      min="5"
-                      max="120"
-                      value={prepTime}
-                      onChange={(e) => setPrepTime(parseInt(e.target.value))}
-                      data-testid="prep-time-edit-input"
-                    />
-                    <Button onClick={handleUpdatePrepTime} size="sm">
-                      Update
+                  <div className="flex items-center justify-between mb-2">
+                    <Label htmlFor="prep-time-edit">Prep Time</Label>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => setEditingPrepTime(!editingPrepTime)}
+                    >
+                      {editingPrepTime ? 'Cancel' : 'Edit'}
                     </Button>
                   </div>
+                  
+                  {editingPrepTime ? (
+                    <div className="flex gap-2">
+                      <Input
+                        id="prep-time-edit"
+                        type="number"
+                        min="5"
+                        max="120"
+                        value={prepTime}
+                        onChange={(e) => setPrepTime(parseInt(e.target.value) || 20)}
+                        data-testid="prep-time-edit-input"
+                        placeholder="Minutes"
+                      />
+                      <Button 
+                        onClick={() => {
+                          handleUpdatePrepTime();
+                          setEditingPrepTime(false);
+                        }} 
+                        size="sm"
+                        className="bg-green-600 hover:bg-green-700"
+                      >
+                        Update
+                      </Button>
+                    </div>
+                  ) : (
+                    <p className="text-lg font-medium text-gray-700">{prepTime} minutes</p>
+                  )}
                 </div>
                 <Button
                   className="w-full bg-blue-600 hover:bg-blue-700"
