@@ -440,40 +440,44 @@ const Dashboard = () => {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {summary.topDishes.map((dish, index) => (
-              <div
-                key={index}
-                className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
-                data-testid={`top-dish-${index}`}
-              >
-                <div className="flex items-center space-x-4">
-                  <div className="relative">
-                    {dish.image ? (
-                      <img
-                        src={dish.image}
-                        alt={dish.name}
-                        className="w-16 h-16 object-cover rounded-lg"
-                      />
-                    ) : (
-                      <div className="w-16 h-16 bg-orange-100 rounded-lg flex items-center justify-center">
-                        <ChefHat className="w-8 h-8 text-orange-600" />
+            {(summary?.topDishes || []).length > 0 ? (
+              summary.topDishes.map((dish, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                  data-testid={`top-dish-${index}`}
+                >
+                  <div className="flex items-center space-x-4">
+                    <div className="relative">
+                      {dish.image ? (
+                        <img
+                          src={dish.image}
+                          alt={dish.name}
+                          className="w-16 h-16 object-cover rounded-lg"
+                        />
+                      ) : (
+                        <div className="w-16 h-16 bg-orange-100 rounded-lg flex items-center justify-center">
+                          <ChefHat className="w-8 h-8 text-orange-600" />
+                        </div>
+                      )}
+                      <div className="absolute -top-2 -left-2 w-6 h-6 bg-orange-600 text-white rounded-full flex items-center justify-center text-xs font-bold">
+                        {index + 1}
                       </div>
-                    )}
-                    <div className="absolute -top-2 -left-2 w-6 h-6 bg-orange-600 text-white rounded-full flex items-center justify-center text-xs font-bold">
-                      {index + 1}
+                    </div>
+                    <div>
+                      <p className="font-semibold text-gray-900">{dish.name}</p>
+                      <p className="text-sm text-gray-600">{dish.orders} orders</p>
                     </div>
                   </div>
-                  <div>
-                    <p className="font-semibold text-gray-900">{dish.name}</p>
-                    <p className="text-sm text-gray-600">{dish.orders} orders</p>
+                  <div className="text-right">
+                    <p className="font-bold text-gray-900">{formatCurrency(dish.revenue)}</p>
+                    <p className="text-xs text-gray-500">Revenue</p>
                   </div>
                 </div>
-                <div className="text-right">
-                  <p className="font-bold text-gray-900">{formatCurrency(dish.revenue)}</p>
-                  <p className="text-xs text-gray-500">Revenue</p>
-                </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              <p className="text-gray-500 text-center py-8">No top dishes data yet</p>
+            )}
           </div>
         </CardContent>
       </Card>
