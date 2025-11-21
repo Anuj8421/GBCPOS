@@ -243,7 +243,9 @@ const OrderDetailPage = () => {
   };
 
   const handleDeclineOrder = async () => {
-    if (!cancelReason.trim()) {
+    const finalReason = cancelReason === 'Other' ? customCancelReason.trim() : cancelReason;
+    
+    if (!finalReason) {
       toast.error('Please provide a cancellation reason');
       return;
     }
@@ -263,6 +265,8 @@ const OrderDetailPage = () => {
     } finally {
       setProcessing(false);
       setShowCancelDialog(false);
+      setCancelReason('');
+      setCustomCancelReason('');
     }
   };
 
