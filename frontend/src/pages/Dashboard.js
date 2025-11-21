@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { analyticsService } from '@/services/analytics.service';
+import { orderService } from '@/services/order.service';
+import { useAuth } from '@/context/AuthContext';
 import { formatCurrency, formatRelativeTime, formatDate } from '@/utils/helpers';
 import { 
   DollarSign, 
@@ -27,8 +29,12 @@ import { addDays, format } from 'date-fns';
 import { cn } from '@/lib/utils';
 
 const Dashboard = () => {
+  const { user } = useAuth();
+  const restaurantId = user?.restaurant_id;
   const navigate = useNavigate();
   const [summary, setSummary] = useState(null);
+  const [stats, setStats] = useState(null);
+  const [recentOrders, setRecentOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [dateRange, setDateRange] = useState({
     from: new Date(),
