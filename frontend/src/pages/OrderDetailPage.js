@@ -89,14 +89,18 @@ const OrderDetailPage = () => {
         subtotal: orderData.amount || 0, // Calculate properly if you have breakdown
         tax: 0,
         deliveryFee: 0,
+        specialInstructions: orderData.notes || '',
         items: parsedItems.map(item => ({
           name: item.dish_name || item.name || 'Item',
           quantity: parseInt(item.quantity) || 1,
           price: parseFloat(item.unit_price || item.price || 0),
-          modifiers: item.customizations || []
+          modifiers: item.customizations || [],
+          notes: item.notes || '',
+          bundleItems: item.bundle_items || item.bundleItems || []
         })),
         acceptedAt: orderData.approvedAt,
-        prepTime: null
+        prepTime: null,
+        cancelledBy: orderData.cancelledBy || null
       };
       
       setOrder(transformedOrder);
