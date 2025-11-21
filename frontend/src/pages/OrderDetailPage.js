@@ -34,10 +34,23 @@ const OrderDetailPage = () => {
   const [loading, setLoading] = useState(true);
   const [prepTime, setPrepTime] = useState(20);
   const [cancelReason, setCancelReason] = useState('');
+  const [customCancelReason, setCustomCancelReason] = useState('');
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [processing, setProcessing] = useState(false);
   const [selectedDriver, setSelectedDriver] = useState('');
   const [showReceiptPreview, setShowReceiptPreview] = useState(false);
+
+  // Predefined cancel reasons
+  const cancelReasons = [
+    'Item unavailable',
+    'Restaurant too busy',
+    'Restaurant temporarily closed',
+    'Outside delivery area',
+    'Pricing issue',
+    'Rider not available',
+    'Fraudulent order',
+    'Other'
+  ];
 
   // Mock driver list
   const drivers = [
