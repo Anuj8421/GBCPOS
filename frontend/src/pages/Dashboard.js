@@ -99,21 +99,12 @@ const Dashboard = () => {
           status: order.status,
           total: order.amount,
           createdAt: order.createdAt
-            customerName: 'Mike Davis',
-            status: 'ready',
-            total: 67.25,
-            createdAt: new Date(Date.now() - 20 * 60 * 1000).toISOString()
-          }
-        ],
+        })) || [],
         topDishes: [
-          { name: 'Paneer Tikka Masala', orders: 24, revenue: 993.60, image: 'https://storage.googleapis.com/food_order_php_app/dishes/68c86a47a3ac4_Paneer_Tikka_Masala-removebg-preview.jpg' },
-          { name: 'Vegetable Masala', orders: 18, revenue: 183.60, image: 'https://storage.googleapis.com/food_order_php_app/dishes/68c86959c4af2_Vegetable_Masala-removebg-preview.jpg' },
-          { name: 'Butter Chicken', orders: 15, revenue: 621.00, image: null }
+          // TODO: Implement top dishes query from order items
         ],
         frequentCustomers: [
-          { name: 'John Smith', orders: 12, totalSpent: 456.80, phone: '+449526315487' },
-          { name: 'Sarah Johnson', orders: 8, totalSpent: 342.50, phone: '+449526315488' },
-          { name: 'Mike Davis', orders: 6, totalSpent: 289.30, phone: '+449526315489' }
+          // TODO: Implement frequent customers query
         ]
       });
       
