@@ -229,7 +229,8 @@ const OrderDetailPage = () => {
     
     try {
       setProcessing(true);
-      await orderService.updateOrderStatus(restaurantId, orderId, 'ready', user?.username || 'pos_app');
+      const orderNumber = orderId.startsWith('#') ? orderId : `#${orderId}`;
+      await orderService.updateOrderStatus(restaurantId, orderNumber, 'ready', user?.username || 'pos_app');
       
       // Print delivery sticker
       await printerService.printDeliverySticker(order);
