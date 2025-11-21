@@ -62,8 +62,10 @@ const OrderDetailPage = () => {
   ];
 
   useEffect(() => {
-    fetchOrderDetails();
-  }, [orderId]);
+    if (restaurantId) {
+      fetchOrderDetails();
+    }
+  }, [orderId, restaurantId]);
 
   const fetchOrderDetails = async () => {
     if (!restaurantId) return;
