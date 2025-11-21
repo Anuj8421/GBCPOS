@@ -44,6 +44,7 @@ function App() {
               <Route path="orders" element={<OrdersPage />} />
               <Route path="orders/:orderId" element={<OrderDetailPage />} />
               <Route path="menu" element={<MenuPage />} />
+              <Route path="search" element={<SearchPage />} />
               <Route path="store" element={<StorePage />} />
               <Route path="analytics" element={<AnalyticsPage />} />
               <Route path="analytics/top-dishes" element={<TopDishesPage />} />
