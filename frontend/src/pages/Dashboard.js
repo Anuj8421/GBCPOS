@@ -160,7 +160,7 @@ const Dashboard = () => {
     },
     {
       title: 'Avg Prep Time',
-      value: `${summary.avgPrepTime} min`,
+      value: `${summary?.avgPrepTime || 0} min`,
       icon: Clock,
       color: 'text-purple-600',
       bgColor: 'bg-purple-50',
@@ -168,7 +168,7 @@ const Dashboard = () => {
     },
     {
       title: 'Completion Rate',
-      value: `${summary.completionRate}%`,
+      value: `${summary?.completionRate || 0}%`,
       icon: Package,
       color: 'text-teal-600',
       bgColor: 'bg-teal-50',
@@ -176,7 +176,7 @@ const Dashboard = () => {
     },
     {
       title: 'Avg Rating',
-      value: summary.avgRating.toFixed(1),
+      value: (summary?.avgRating || 0).toFixed(1),
       icon: Star,
       color: 'text-yellow-600',
       bgColor: 'bg-yellow-50',
