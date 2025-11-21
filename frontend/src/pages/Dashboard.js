@@ -124,7 +124,7 @@ const Dashboard = () => {
     toast.success('Dashboard refreshed');
   };
 
-  if (loading) {
+  if (loading || !summary) {
     return (
       <div className="flex items-center justify-center h-full">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600"></div>
@@ -135,7 +135,7 @@ const Dashboard = () => {
   const statsCards = [
     {
       title: "Sales",
-      value: formatCurrency(summary.todaySales),
+      value: formatCurrency(summary?.todaySales || 0),
       icon: DollarSign,
       color: 'text-green-600',
       bgColor: 'bg-green-50',
@@ -143,7 +143,7 @@ const Dashboard = () => {
     },
     {
       title: "Orders",
-      value: summary.todayOrders,
+      value: summary?.todayOrders || 0,
       icon: ShoppingCart,
       color: 'text-blue-600',
       bgColor: 'bg-blue-50',
@@ -151,11 +151,11 @@ const Dashboard = () => {
     },
     {
       title: 'Pending Orders',
-      value: summary.pendingOrders,
+      value: summary?.pendingOrders || 0,
       icon: AlertCircle,
       color: 'text-orange-600',
       bgColor: 'bg-orange-50',
-      badge: summary.pendingOrders > 0 ? 'Action Required' : null,
+      badge: (summary?.pendingOrders || 0) > 0 ? 'Action Required' : null,
       testId: 'pending-orders-card'
     },
     {
