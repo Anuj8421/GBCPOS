@@ -577,7 +577,7 @@ const OrderDetailPage = () => {
           )}
 
           {/* Actions for ACCEPTED Order */}
-          {order.status === 'accepted' && (
+          {(order.status === 'accepted' || order.status === 'approved') && (
             <Card data-testid="accepted-order-actions">
               <CardHeader>
                 <CardTitle>Order in Progress</CardTitle>
