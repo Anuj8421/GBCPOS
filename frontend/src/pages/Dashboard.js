@@ -364,7 +364,7 @@ const Dashboard = () => {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {summary.recentOrders.map((order) => (
+            {(summary?.recentOrders || []).map((order) => (
               <div
                 key={order.id}
                 className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
@@ -391,6 +391,9 @@ const Dashboard = () => {
                 </div>
               </div>
             ))}
+            {(!summary?.recentOrders || summary.recentOrders.length === 0) && (
+              <p className="text-gray-500 text-center py-8">No recent orders</p>
+            )}
           </div>
         </CardContent>
       </Card>
