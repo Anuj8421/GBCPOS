@@ -53,79 +53,61 @@ def decode_access_token(token: str) -> Optional[Dict]:
         logger.error(f"JWT decode error: {str(e)}")
         return None
 
-async def authenticate_user(email: str, password: str) -> Optional[Dict]:
+async def authenticate_user(username: str, password: str) -> Optional[Dict]:
     """
-    Authenticate user against MySQL database
-    Returns user data if successful, None otherwise
+    Authenticate restaurant user against MySQL database
+    Returns restaurant data if successful, None otherwise
     """
     try:
         with get_mysql_connection() as conn:
             with conn.cursor() as cursor:
-                # Query users table - adjust table/column names as needed
-                # Common table names: users, user, restaurant_users, etc.
-                # Try multiple possible queries
+                # Query restaurants table by username or email
+                logger.info(f"Attempting authentication for: {username}")
                 
-                queries = [
-                    # Try standard users table
-                    "SELECT * FROM users WHERE email = %s AND status = 'active' LIMIT 1",
-                    # Try without status check
-                    "SELECT * FROM users WHERE email = %s LIMIT 1",
-                    # Try user table (singular)
-                    "SELECT * FROM user WHERE email = %s LIMIT 1",
-                    # Try restaurant_users
-                    "SELECT * FROM restaurant_users WHERE email = %s LIMIT 1",
-                    # Try admins table
-                    "SELECT * FROM admins WHERE email = %s LIMIT 1",
-                ]
+                # Try both username and email fields
+                cursor.execute("""
+                    SELECT * FROM restaurants 
+                    WHERE (username = %s OR email = %s) 
+                    AND is_active = 1 
+                    AND status = 'approved'
+                    LIMIT 1
+                """, (username, username))
                 
-                user = None
-                for query in queries:
-                    try:
-                        cursor.execute(query, (email,))
-                        user = cursor.fetchone()
-                        if user:
-                            logger.info(f"User found with query: {query}")
-                            break
-                    except Exception as query_error:
-                        logger.debug(f"Query failed: {query} - {str(query_error)}")
-                        continue
+                restaurant = cursor.fetchone()
                 
-                if not user:
-                    logger.warning(f"User not found: {email}")
+                if not restaurant:
+                    logger.warning(f"Restaurant not found or not active: {username}")
                     return None
                 
-                # Verify password - common password field names
-                password_field = None
-                for field in ['password', 'password_hash', 'hashed_password', 'pwd']:
-                    if field in user:
-                        password_field = field
-                        break
+                # Verify password
+                stored_password = restaurant.get('password_hash')
                 
-                if not password_field:
-                    logger.error(f"No password field found in user record. Fields: {user.keys()}")
+                if not stored_password:
+                    logger.error(f"No password_hash found for restaurant: {username}")
                     return None
-                
-                stored_password = user[password_field]
                 
                 if not verify_password(password, stored_password):
-                    logger.warning(f"Invalid password for user: {email}")
+                    logger.warning(f"Invalid password for restaurant: {username}")
                     return None
                 
-                # Get restaurant_id - try multiple field names
-                restaurant_id = None
-                for field in ['restaurant_id', 'restaurantId', 'rest_id', 'store_id', 'id']:
-                    if field in user and user[field]:
-                        restaurant_id = str(user[field])
-                        break
-                
-                # Return user data
+                # Return restaurant data
                 return {
-                    'id': str(user.get('id', user.get('user_id', ''))),
-                    'name': user.get('name', user.get('username', user.get('full_name', email.split('@')[0]))),
-                    'email': email,
-                    'role': user.get('role', user.get('user_role', 'manager')),
-                    'restaurant_id': restaurant_id,
-                    'phone': user.get('phone', user.get('mobile', '')),
+                    'id': str(restaurant['id']),
+                    'restaurant_id': str(restaurant['id']),
+                    'app_restaurant_uid': restaurant.get('app_restaurant_uid', ''),
+                    'name': restaurant.get('name', ''),
+                    'username': restaurant.get('username', ''),
+                    'email': restaurant.get('email', ''),
+                    'manager_name': restaurant.get('manager_name', ''),
+                    'manager_email': restaurant.get('manager_email', ''),
+                    'contact_number': restaurant.get('contact_number', ''),
+                    'address': restaurant.get('address', ''),
+                    'city': restaurant.get('city', ''),
+                    'postcode': restaurant.get('postcode', ''),
+                    'opening_time': str(restaurant.get('opening_time', '')) if restaurant.get('opening_time') else '',
+                    'closing_time': str(restaurant.get('closing_time', '')) if restaurant.get('closing_time') else '',
+                    'status': restaurant.get('status', ''),
+                    'is_active': restaurant.get('is_active', 0),
                 }
                 
     except Exception as e:
