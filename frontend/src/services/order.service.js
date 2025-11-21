@@ -46,12 +46,29 @@ export const orderService = {
   },
 
   // Update order status
-  updateOrderStatus: async (orderId, status) => {
+  updateOrderStatus: async (restaurantId, orderNumber, status, updatedBy = 'pos_app') => {
     try {
-      const response = await apiClient.patch(`/orders/${orderId}/status`, { status });
+      const response = await apiClient.patch(`/orders/${orderNumber}/status`, {
+        restaurant_id: restaurantId,
+        status,
+        updated_by: updatedBy
+      });
       return response.data;
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Failed to update order status');
+    }
+  },
+
+  // Get dashboard statistics
+  getDashboardStats: async (restaurantId, startDate = null, endDate = null) => {
+    try {
+      const params = { restaurant_id: restaurantId };
+      if (startDate) params.start_date = startDate;
+      if (endDate) params.end_date = endDate;
+      const response = await apiClient.get('/dashboard/stats', { params });
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Failed to fetch dashboard stats');
     }
   },
 
