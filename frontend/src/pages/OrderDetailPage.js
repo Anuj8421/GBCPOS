@@ -210,7 +210,8 @@ const OrderDetailPage = () => {
 
     try {
       setProcessing(true);
-      await orderService.updateOrderStatus(restaurantId, orderId, 'cancelled', user?.username || 'pos_app');
+      const orderNumber = orderId.startsWith('#') ? orderId : `#${orderId}`;
+      await orderService.updateOrderStatus(restaurantId, orderNumber, 'cancelled', user?.username || 'pos_app');
       
       toast.success('Order declined');
       navigate('/orders');
