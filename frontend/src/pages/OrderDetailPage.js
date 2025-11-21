@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { orderService } from '@/services/order.service';
 import { printerService } from '@/services/printer.service';
+import { useAuth } from '@/context/AuthContext';
 import { formatCurrency, formatDateTime, formatRelativeTime } from '@/utils/helpers';
 import { ORDER_STATUS_COLORS, ORDER_STATUS_LABELS } from '@/utils/constants';
 import { ArrowLeft, Clock, Phone, MapPin, Printer, Check, X, Truck, Tag } from 'lucide-react';
@@ -26,6 +27,8 @@ import { toast } from 'sonner';
 
 const OrderDetailPage = () => {
   const { orderId } = useParams();
+  const { user } = useAuth();
+  const restaurantId = user?.restaurant_id;
   const navigate = useNavigate();
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
