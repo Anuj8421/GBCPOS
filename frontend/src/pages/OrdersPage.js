@@ -286,10 +286,7 @@ const OrdersPage = () => {
                       <div className="flex space-x-2">
                         <Button
                           className="flex-1 bg-green-600 hover:bg-green-700"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleViewDetails(order.id);
-                          }}
+                          onClick={(e) => handleAcceptOrder(order.id, e)}
                           data-testid={`accept-order-${order.id}`}
                         >
                           Accept Order
@@ -297,10 +294,7 @@ const OrdersPage = () => {
                         <Button
                           variant="destructive"
                           className="flex-1"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleViewDetails(order.id);
-                          }}
+                          onClick={(e) => handleDeclineOrder(order.id, e)}
                           data-testid={`decline-order-${order.id}`}
                         >
                           Decline
