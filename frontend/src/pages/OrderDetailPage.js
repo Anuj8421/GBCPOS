@@ -571,7 +571,7 @@ const OrderDetailPage = () => {
                   data-testid="accept-order-button"
                 >
                   <Check className="w-4 h-4 mr-2" />
-                  Accept Order ({prepTime} min)
+                  Accept Order
                 </Button>
                 <Button
                   variant="destructive"
