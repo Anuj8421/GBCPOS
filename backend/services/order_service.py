@@ -73,12 +73,12 @@ def get_orders(restaurant_id: int, status: Optional[str] = None, limit: int = 10
                         'itemCount': order['item_count'] or 0,
                         'items': order['product_details'] or '',
                         'notes': order['kitchen_notes'] or '',
-                        'orderDate': order['order_date'].isoformat() if order['order_date'] else '',
-                        'createdAt': order['created_at'].isoformat() if order['created_at'] else '',
-                        'approvedAt': order['approved_at'].isoformat() if order['approved_at'] else None,
-                        'readyAt': order['ready_at'].isoformat() if order['ready_at'] else None,
-                        'dispatchedAt': order['dispatched_at'].isoformat() if order['dispatched_at'] else None,
-                        'cancelledAt': order['cancelled_at'].isoformat() if order['cancelled_at'] else None,
+                        'orderDate': f"{order['order_date'].isoformat()}Z" if order['order_date'] else '',
+                        'createdAt': f"{order['created_at'].isoformat()}Z" if order['created_at'] else '',
+                        'approvedAt': f"{order['approved_at'].isoformat()}Z" if order['approved_at'] else None,
+                        'readyAt': f"{order['ready_at'].isoformat()}Z" if order['ready_at'] else None,
+                        'dispatchedAt': f"{order['dispatched_at'].isoformat()}Z" if order['dispatched_at'] else None,
+                        'cancelledAt': f"{order['cancelled_at'].isoformat()}Z" if order['cancelled_at'] else None,
                         'cancelReason': order['cancel_reason'] or '',
                         'deliveryDate': order['delivery_date'].isoformat() if order['delivery_date'] else None
                     })
