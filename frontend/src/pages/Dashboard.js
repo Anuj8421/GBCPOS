@@ -411,7 +411,7 @@ const Dashboard = () => {
             >
               <AlertCircle className="w-6 h-6 text-orange-600 mb-2" />
               <p className="font-semibold text-gray-900">View Pending Orders</p>
-              <p className="text-sm text-gray-600 mt-1">{summary.pendingOrders} orders waiting</p>
+              <p className="text-sm text-gray-600 mt-1">{summary?.pendingOrders || 0} orders waiting</p>
             </button>
             <button
               className="p-4 bg-blue-50 hover:bg-blue-100 rounded-lg text-left transition-colors"
