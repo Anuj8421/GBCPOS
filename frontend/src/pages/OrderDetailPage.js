@@ -66,16 +66,40 @@ const OrderDetailPage = () => {
       }
       
       // Parse items if they're a JSON string
+      let parsedItems = [];
       if (typeof orderData.items === 'string') {
         try {
-          orderData.items = JSON.parse(orderData.items);
+          parsedItems = JSON.parse(orderData.items);
         } catch (e) {
           console.error('Error parsing items:', e);
-          orderData.items = [];
+          parsedItems = [];
         }
+      } else {
+        parsedItems = orderData.items || [];
       }
       
-      setOrder(orderData);
+      // Transform API data to match component expectations
+      const transformedOrder = {
+        ...orderData,
+        customerName: orderData.customer?.name || 'Guest',
+        customerPhone: orderData.customer?.phone || '',
+        customerEmail: orderData.customer?.email || '',
+        deliveryAddress: orderData.customer?.address || '',
+        total: orderData.amount || 0,
+        subtotal: orderData.amount || 0, // Calculate properly if you have breakdown
+        tax: 0,
+        deliveryFee: 0,
+        items: parsedItems.map(item => ({
+          name: item.dish_name || item.name || 'Item',
+          quantity: parseInt(item.quantity) || 1,
+          price: parseFloat(item.unit_price || item.price || 0),
+          modifiers: item.customizations || []
+        })),
+        acceptedAt: orderData.approvedAt,
+        prepTime: null
+      };
+      
+      setOrder(transformedOrder);
       setLoading(false);
       return;
       
