@@ -506,39 +506,6 @@ async def bulk_update_availability(data: dict):
         logger.error(f"Error bulk updating availability: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-# ==================== ORDER FETCHING FROM MYSQL ====================
-@api_router.get("/orders/list")
-async def get_restaurant_orders(restaurant_id: int, status: Optional[str] = None, limit: int = 100):
-    """
-    Get orders for a restaurant from MySQL database
-    Supports filtering by status
-    """
-    try:
-        from services.order_service import get_orders
-        orders = get_orders(restaurant_id, status, limit)
-        return JSONResponse(status_code=200, content={"orders": orders, "count": len(orders)})
-    except Exception as e:
-        logger.error(f"Error fetching orders: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
-
-@api_router.get("/orders/detail/{order_number}")
-async def get_order_detail(order_number: str, restaurant_id: int):
-    """
-    Get detailed information for a specific order
-    """
-    try:
-        from services.order_service import get_order_by_number
-        order = get_order_by_number(restaurant_id, order_number)
-        if order:
-            return JSONResponse(status_code=200, content=order)
-        else:
-            raise HTTPException(status_code=404, detail="Order not found")
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Error fetching order detail: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
-
 @api_router.patch("/orders/{order_number}/status")
 async def update_order_status_api(order_number: str, data: dict):
     """
