@@ -178,9 +178,11 @@ const OrderDetailPage = () => {
   };
 
   const handleAcceptOrder = async () => {
+    if (!restaurantId) return;
+    
     try {
       setProcessing(true);
-      // await orderService.acceptOrder(orderId, prepTime);
+      await orderService.updateOrderStatus(restaurantId, orderId, 'approved', user?.username || 'pos_app');
       
       // Print kitchen receipt automatically
       await printerService.printKitchenReceipt(order);
@@ -188,6 +190,7 @@ const OrderDetailPage = () => {
       toast.success(`Order accepted! Prep time: ${prepTime} min`);
       navigate('/orders');
     } catch (error) {
+      console.error('Error accepting order:', error);
       toast.error('Failed to accept order');
     } finally {
       setProcessing(false);
@@ -200,13 +203,16 @@ const OrderDetailPage = () => {
       return;
     }
 
+    if (!restaurantId) return;
+
     try {
       setProcessing(true);
-      // await orderService.cancelOrder(orderId, cancelReason);
+      await orderService.updateOrderStatus(restaurantId, orderId, 'cancelled', user?.username || 'pos_app');
       
       toast.success('Order declined');
       navigate('/orders');
     } catch (error) {
+      console.error('Error declining order:', error);
       toast.error('Failed to decline order');
     } finally {
       setProcessing(false);
@@ -215,9 +221,11 @@ const OrderDetailPage = () => {
   };
 
   const handleMarkReady = async () => {
+    if (!restaurantId) return;
+    
     try {
       setProcessing(true);
-      // await orderService.markReady(orderId);
+      await orderService.updateOrderStatus(restaurantId, orderId, 'ready', user?.username || 'pos_app');
       
       // Print delivery sticker
       await printerService.printDeliverySticker(order);
@@ -226,6 +234,7 @@ const OrderDetailPage = () => {
       // Refresh order details
       fetchOrderDetails();
     } catch (error) {
+      console.error('Error marking ready:', error);
       toast.error('Failed to mark order as ready');
     } finally {
       setProcessing(false);
