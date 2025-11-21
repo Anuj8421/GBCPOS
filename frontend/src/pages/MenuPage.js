@@ -211,14 +211,19 @@ const MenuPage = () => {
       return;
     }
 
+    if (!restaurantId) {
+      toast.error('Restaurant ID not found');
+      return;
+    }
+
     try {
-      // Send to PHP backend for approval
-      // await menuService.createMenuItem(formData);
+      await menuService.createMenuItem(restaurantId, formData);
       
-      toast.success('Item submitted for approval');
+      toast.success('Item submitted for approval! It will be live once approved.');
       setShowAddDialog(false);
-      fetchMenuItems();
+      // Don't refresh immediately as item is pending and won't show until approved
     } catch (error) {
+      console.error('Error creating menu item:', error);
       toast.error('Failed to submit item');
     }
   };
