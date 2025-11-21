@@ -82,6 +82,15 @@ const Dashboard = () => {
       const ordersData = await orderService.getOrders(restaurantId, null, 10);
       setRecentOrders(ordersData.orders || []);
       
+      // Fetch top dishes and frequent customers
+      const topDishesData = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/dashboard/top-dishes?restaurant_id=${restaurantId}&start_date=${startDate}&end_date=${endDate}`)
+        .then(res => res.json())
+        .catch(() => ({ dishes: [] }));
+      
+      const frequentCustomersData = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/dashboard/frequent-customers?restaurant_id=${restaurantId}&start_date=${startDate}&end_date=${endDate}`)
+        .then(res => res.json())
+        .catch(() => ({ customers: [] }));
+      
       // Build summary data
       setSummary({
         todaySales: statsData.totalRevenue || 0,
@@ -100,12 +109,8 @@ const Dashboard = () => {
           total: order.amount,
           createdAt: order.createdAt
         })) || [],
-        topDishes: [
-          // TODO: Implement top dishes query from order items
-        ],
-        frequentCustomers: [
-          // TODO: Implement frequent customers query
-        ]
+        topDishes: topDishesData.dishes || [],
+        frequentCustomers: frequentCustomersData.customers || []
       });
       
       setLastSync(new Date());
