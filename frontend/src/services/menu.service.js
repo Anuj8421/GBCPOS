@@ -67,12 +67,28 @@ export const menuService = {
   },
 
   // Toggle item availability (Out of Stock)
-  toggleItemAvailability: async (itemId, available) => {
+  toggleItemAvailability: async (itemId, restaurantId, available) => {
     try {
-      const response = await apiClient.patch(`/menu/items/${itemId}/availability`, { available });
+      const response = await apiClient.patch(`/menu/items/${itemId}/availability`, null, {
+        params: { restaurant_id: restaurantId, available }
+      });
       return response.data;
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Failed to update availability');
+    }
+  },
+
+  // Bulk update availability
+  bulkUpdateAvailability: async (restaurantId, dishIds, available) => {
+    try {
+      const response = await apiClient.post('/menu/bulk-availability', {
+        restaurant_id: restaurantId,
+        dish_ids: dishIds,
+        available
+      });
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Failed to bulk update availability');
     }
   },
 
