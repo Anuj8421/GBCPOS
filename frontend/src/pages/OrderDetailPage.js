@@ -325,9 +325,13 @@ const OrderDetailPage = () => {
     const statusConfig = {
       pending: { color: 'bg-yellow-100 text-yellow-800', icon: '🟨', label: 'Pending' },
       accepted: { color: 'bg-blue-100 text-blue-800', icon: '🟦', label: 'Accepted' },
+      approved: { color: 'bg-blue-100 text-blue-800', icon: '🟦', label: 'Accepted' }, // Database uses 'approved'
+      preparing: { color: 'bg-indigo-100 text-indigo-800', icon: '👨‍🍳', label: 'Preparing' },
       ready: { color: 'bg-green-100 text-green-800', icon: '🟢', label: 'Ready' },
+      dispatched: { color: 'bg-purple-100 text-purple-800', icon: '🚚', label: 'Dispatched' },
       scheduled: { color: 'bg-purple-100 text-purple-800', icon: '🟣', label: 'Scheduled' },
       delivered: { color: 'bg-green-500 text-white', icon: '✓', label: 'Delivered' },
+      completed: { color: 'bg-green-500 text-white', icon: '✓', label: 'Delivered' }, // Database uses 'completed'
       cancelled: { color: 'bg-red-500 text-white', icon: '✗', label: 'Cancelled' },
       refunded: { color: 'bg-gray-500 text-white', icon: '↺', label: 'Refunded' }
     };
