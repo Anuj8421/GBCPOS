@@ -1,4 +1,4 @@
-import bcrypt from 'bcrypt';
+import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 import pool from '../config/database';
 import { jwtConfig } from '../config/jwt';
@@ -24,9 +24,9 @@ export class AuthService {
         throw new Error('Restaurant account is not active or approved');
       }
 
-      const isValidPassword = await bcrypt.compare(password, restaurant.password_hash);
+      const passwordHash = crypto.createHash('sha256').update(password).digest('hex');
 
-      if (!isValidPassword) {
+      if (passwordHash !== restaurant.password_hash) {
         return null;
       }
 
