@@ -6,25 +6,26 @@ export class MenuService {
     try {
       const [rows] = await pool.execute(
         `SELECT 
-          dish_id, name, price, description, image_path, 
-          is_available, category, created_at
+          dish_id, name, selling_price, description, primary_image, 
+          availability_status, menu_section, is_active, created_at, food_type
         FROM dishes 
-        WHERE restaurant_id = ?
-        ORDER BY category, name`,
+        WHERE restaurant_id = ? AND is_deleted = 0
+        ORDER BY menu_section, name`,
         [restaurantId]
       );
 
-      const dishes = rows as Dish[];
+      const dishes = rows as any[];
 
       return dishes.map(dish => ({
         id: dish.dish_id,
         name: dish.name,
-        price: dish.price,
+        price: parseFloat(dish.selling_price) || 0,
         description: dish.description,
-        imagePath: dish.image_path,
-        isAvailable: dish.is_available,
-        category: dish.category,
-        createdAt: dish.created_at
+        imagePath: dish.primary_image,
+        isAvailable: dish.availability_status === 'available' && dish.is_active === 1,
+        category: dish.menu_section,
+        createdAt: dish.created_at,
+        foodType: dish.food_type
       }));
     } catch (error) {
       console.error('Get menu items error:', error);
