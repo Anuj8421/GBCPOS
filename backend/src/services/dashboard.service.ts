@@ -43,7 +43,7 @@ export class DashboardService {
   async getTopDishes(restaurantId: number): Promise<any[]> {
     try {
       const [rows] = await pool.execute(
-        `SELECT items
+        `SELECT product_details
         FROM order_management
         WHERE restaurant_id = ? 
           AND fulfillment_status IN ('approved', 'ready', 'dispatched', 'completed')
@@ -56,12 +56,12 @@ export class DashboardService {
       const dishCount: Record<string, { name: string; count: number; revenue: number }> = {};
 
       orders.forEach(order => {
-        const items = parseJsonField(order.items);
+        const items = parseJsonField(order.product_details);
         if (Array.isArray(items)) {
           items.forEach((item: any) => {
-            const dishName = item.name || item.dish_name || 'Unknown';
-            const quantity = item.quantity || 1;
-            const price = item.price || 0;
+            const dishName = item.dish_name || item.name || 'Unknown';
+            const quantity = parseInt(item.quantity) || 1;
+            const price = parseFloat(item.selling_price || item.unit_price || item.price) || 0;
 
             if (!dishCount[dishName]) {
               dishCount[dishName] = { name: dishName, count: 0, revenue: 0 };
