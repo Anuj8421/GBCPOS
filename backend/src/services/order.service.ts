@@ -126,21 +126,16 @@ export class OrderService {
 
       if (status === 'accepted') {
         updates.push('approved_at = NOW()');
-        if (prepTimeMinutes !== undefined) {
-          updates.push('prep_time_minutes = ?');
-          params.push(prepTimeMinutes);
-        }
       } else if (status === 'ready') {
         updates.push('ready_at = NOW()');
       } else if (status === 'dispatched') {
         updates.push('dispatched_at = NOW()');
       } else if (status === 'completed') {
-        updates.push('completed_at = NOW()');
+        updates.push('delivery_date = NOW()');
       } else if (status === 'cancelled') {
-        updates.push('cancelled_at = NOW()', 'cancelled_by = ?');
-        params.push('restaurant');
+        updates.push('cancelled_at = NOW()');
         if (cancellationReason) {
-          updates.push('cancellation_reason = ?');
+          updates.push('cancel_reason = ?');
           params.push(cancellationReason);
         }
       }
