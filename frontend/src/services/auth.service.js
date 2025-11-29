@@ -4,10 +4,10 @@ export const authService = {
   // JWT-based authentication
   login: async (email, password) => {
     try {
-      const response = await apiClient.post('/auth/login', { email, password });
+      const response = await apiClient.post('/auth/login', { username: email, password });
       return response.data;
     } catch (error) {
-      throw new Error(error.response?.data?.detail || 'Invalid credentials. Please check your email and password.');
+      throw new Error(error.response?.data?.error || error.response?.data?.detail || 'Invalid credentials. Please check your email and password.');
     }
   },
 
