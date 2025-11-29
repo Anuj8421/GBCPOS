@@ -5,7 +5,7 @@ import { jwtConfig } from '../config/jwt';
 import { Restaurant } from '../types';
 
 export class AuthService {
-  async login(username: string, password: string): Promise<{ token: string; restaurant: any } | null> {
+  async login(username: string, password: string): Promise<{ token: string; user: any } | null> {
     try {
       const [rows] = await pool.execute(
         'SELECT * FROM restaurants WHERE username = ?',
