@@ -535,6 +535,10 @@ class GBCPOSAPITester:
         self.test_add_menu_item()
         self.test_update_menu_item()
         
+        # Order status update tests (require auth)
+        self.test_order_status_update()
+        self.test_order_status_update_missing_status()
+        
         # Print summary
         self.print_summary()
         
