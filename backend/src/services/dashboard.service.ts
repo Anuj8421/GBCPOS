@@ -26,22 +26,12 @@ export class DashboardService {
 
       const stats = (statsRows as any[])[0];
 
-      const [prepTimeRows] = await pool.execute(
-        `SELECT AVG(prep_time_minutes) as avgPrepTime
-        FROM order_management
-        WHERE restaurant_id = ? AND prep_time_minutes IS NOT NULL AND fulfillment_status IN ('ready', 'dispatched', 'completed')${dateFilter}`,
-        params
-      );
-
-      const prepTimeResult = (prepTimeRows as any[])[0];
-      const avgPrepTime = prepTimeResult.avgPrepTime ? Math.round(prepTimeResult.avgPrepTime) : 0;
-
       return {
         totalOrders: parseInt(stats.totalOrders) || 0,
         revenue: parseFloat(stats.revenue) || 0,
         activeOrders: parseInt(stats.activeOrders) || 0,
         completedOrders: parseInt(stats.completedOrders) || 0,
-        avgPrepTime,
+        avgPrepTime: 0,
         avgRating: 4.5
       };
     } catch (error) {
