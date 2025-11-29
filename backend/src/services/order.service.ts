@@ -63,39 +63,48 @@ export class OrderService {
     try {
       const [rows] = await pool.execute(
         `SELECT 
-          order_id, order_number, fulfillment_status, customer, 
+          order_id, order_number, fulfillment_status, customer, customer_email, customer_phone,
           total_amount, created_at, approved_at, ready_at,
-          dispatched_at, completed_at, cancelled_at, cancelled_by,
-          cancellation_reason, notes, items, prep_time_minutes
+          dispatched_at, delivery_date, cancelled_at,
+          cancel_reason, kitchen_notes, product_details,
+          delivery_method, customer_address, payment_method, payment_status
         FROM order_management 
         WHERE restaurant_id = ? AND order_number = ?`,
         [restaurantId, orderNumber]
       );
 
-      const orders = rows as Order[];
+      const orders = rows as any[];
 
       if (orders.length === 0) {
         return null;
       }
 
       const order = orders[0];
+      const items = parseJsonField(order.product_details);
 
       return {
         orderNumber: order.order_number,
         status: mapOrderStatus(order.fulfillment_status),
-        customer: parseJsonField(order.customer),
-        totalAmount: order.total_amount,
+        customer: {
+          name: order.customer,
+          email: order.customer_email,
+          phone: order.customer_phone,
+          address: order.customer_address
+        },
+        totalAmount: parseFloat(order.total_amount) || 0,
         createdAt: order.created_at,
         approvedAt: order.approved_at,
         readyAt: order.ready_at,
         dispatchedAt: order.dispatched_at,
-        completedAt: order.completed_at,
+        completedAt: order.delivery_date,
         cancelledAt: order.cancelled_at,
-        cancelledBy: order.cancelled_by,
-        cancellationReason: order.cancellation_reason,
-        notes: order.notes,
-        items: parseJsonField(order.items),
-        prepTimeMinutes: order.prep_time_minutes
+        cancelledBy: order.cancelled_at ? 'restaurant' : null,
+        cancellationReason: order.cancel_reason,
+        notes: order.kitchen_notes,
+        items: Array.isArray(items) ? items : [],
+        deliveryMethod: order.delivery_method,
+        paymentMethod: order.payment_method,
+        paymentStatus: order.payment_status
       };
     } catch (error) {
       console.error('Get order detail error:', error);
