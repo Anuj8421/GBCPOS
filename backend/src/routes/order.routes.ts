@@ -64,27 +64,4 @@ router.patch('/:orderNumber/status', authenticateToken, async (req: AuthRequest,
   }
 });
 
-router.patch('/:orderNumber/prep-time', authenticateToken, async (req: AuthRequest, res: Response): Promise<void> => {
-  try {
-    const { orderNumber } = req.params;
-    const { prepTimeMinutes } = req.body;
-
-    if (prepTimeMinutes === undefined) {
-      res.status(400).json({ error: 'Prep time is required' });
-      return;
-    }
-
-    const order = await orderService.updatePrepTime(
-      req.restaurant!.id,
-      orderNumber,
-      prepTimeMinutes
-    );
-
-    res.json(order);
-  } catch (error) {
-    console.error('Update prep time error:', error);
-    res.status(500).json({ error: 'Failed to update prep time' });
-  }
-});
-
 export default router;
