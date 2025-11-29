@@ -423,6 +423,85 @@ class GBCPOSAPITester:
         except Exception as e:
             self.log_test("Update Menu Item", False, f"Update menu item error: {str(e)}")
             
+    def test_order_status_update(self):
+        """Test updating order status"""
+        if not self.token:
+            self.log_test("Order Status Update", False, "No authentication token available")
+            return
+            
+        try:
+            # Get pending orders to test status update
+            response = self.make_request("GET", "/orders/list?status=pending")
+            
+            if response.status_code == 200:
+                orders = response.json()
+                if isinstance(orders, list) and len(orders) > 0:
+                    order_number = orders[0].get('orderNumber')
+                    if order_number:
+                        import urllib.parse
+                        encoded_order_number = urllib.parse.quote(order_number, safe='')
+                        
+                        # Test status update from pending to accepted
+                        update_data = {"status": "accepted"}
+                        update_response = self.make_request("PATCH", f"/orders/{encoded_order_number}/status", update_data)
+                        
+                        if update_response.status_code == 200:
+                            update_result = update_response.json()
+                            if update_result.get('status') == 'accepted':
+                                self.log_test("Order Status Update", True, 
+                                            f"Order {order_number} status updated to accepted", update_result)
+                            else:
+                                self.log_test("Order Status Update", False, 
+                                            f"Status update succeeded but status not changed: {update_result}")
+                        else:
+                            self.log_test("Order Status Update", False, 
+                                        f"Order status update failed with status {update_response.status_code}: {update_response.text}")
+                    else:
+                        self.log_test("Order Status Update", False, "No order number found in pending orders")
+                else:
+                    self.log_test("Order Status Update", False, "No pending orders available to test status update")
+            else:
+                self.log_test("Order Status Update", False, "Could not retrieve pending orders for status update test")
+        except Exception as e:
+            self.log_test("Order Status Update", False, f"Order status update error: {str(e)}")
+            
+    def test_order_status_update_missing_status(self):
+        """Test order status update with missing status field"""
+        if not self.token:
+            self.log_test("Order Status Update Missing Status", False, "No authentication token available")
+            return
+            
+        try:
+            # Get any order to test with
+            response = self.make_request("GET", "/orders/list?status=all")
+            
+            if response.status_code == 200:
+                orders = response.json()
+                if isinstance(orders, list) and len(orders) > 0:
+                    order_number = orders[0].get('orderNumber')
+                    if order_number:
+                        import urllib.parse
+                        encoded_order_number = urllib.parse.quote(order_number, safe='')
+                        
+                        # Test with missing status field
+                        update_data = {}  # Missing status
+                        update_response = self.make_request("PATCH", f"/orders/{encoded_order_number}/status", update_data)
+                        
+                        if update_response.status_code == 400:
+                            self.log_test("Order Status Update Missing Status", True, 
+                                        "Correctly rejected status update with missing status field")
+                        else:
+                            self.log_test("Order Status Update Missing Status", False, 
+                                        f"Expected 400, got {update_response.status_code}: {update_response.text}")
+                    else:
+                        self.log_test("Order Status Update Missing Status", False, "No order number found")
+                else:
+                    self.log_test("Order Status Update Missing Status", False, "No orders available for test")
+            else:
+                self.log_test("Order Status Update Missing Status", False, "Could not retrieve orders for test")
+        except Exception as e:
+            self.log_test("Order Status Update Missing Status", False, f"Missing status test error: {str(e)}")
+            
     def run_all_tests(self):
         """Run all API tests in sequence"""
         print("🚀 Starting GBC POS API Testing...")
