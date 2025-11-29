@@ -297,7 +297,10 @@ class GBCPOSAPITester:
                     # Use the first order's number
                     order_number = orders[0].get('order_number') or orders[0].get('orderNumber')
                     if order_number:
-                        detail_response = self.make_request("GET", f"/orders/detail/{order_number}")
+                        # URL encode the order number (especially for # character)
+                        import urllib.parse
+                        encoded_order_number = urllib.parse.quote(order_number, safe='')
+                        detail_response = self.make_request("GET", f"/orders/detail/{encoded_order_number}")
                         
                         if detail_response.status_code == 200:
                             detail_data = detail_response.json()
