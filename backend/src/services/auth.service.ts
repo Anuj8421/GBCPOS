@@ -32,8 +32,7 @@ export class AuthService {
 
       const token = jwt.sign(
         { restaurant_id: restaurant.id },
-        jwtConfig.secret as string,
-        { expiresIn: jwtConfig.expiresIn as string }
+        jwtConfig.secret
       );
 
       return {
