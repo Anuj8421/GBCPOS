@@ -158,7 +158,7 @@ The app is **fully functional with mock data** and ready to connect to your PHP 
 
 ### Frontend (.env)
 ```bash
-REACT_APP_BACKEND_URL=https://easyorder-12.preview.emergentagent.com
+REACT_APP_BACKEND_URL=https://restaurant-pos-12.preview.emergentagent.com
 REACT_APP_PHP_API_URL=http://your-php-backend.com/api  # Add this
 WDS_SOCKET_PORT=443
 ```

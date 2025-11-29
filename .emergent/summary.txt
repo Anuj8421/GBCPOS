@@ -1,0 +1,207 @@
+<analysis>original_problem_statement:
+The user wants to build a Point of Sale (POS) application called GBC POS APP for restaurant partners, optimized for an iMin Swift 2 Pro device.
+
+**PRODUCT REQUIREMENTS:**
+-   **Authentication:** Must connect directly to the user's provided MySQL database for credentials. The registration page should be removed.
+-   **Dashboard:**
+    -   Display key metrics (Total Orders, Revenue), filterable by date.
+    -   Show store name, manager's name, and Last Sync status.
+    -   Include quick actions (toggle store status) and links (Report an Issue).
+    -   Feature sections for Top sold Dishes Today & Most Frequent Customer.
+    -   Display charts for hourly sales and order statuses.
+-   **Order Management:**
+    -   Dedicated pages for different order statuses (New, Accepted, etc.).
+    -   Real-time order notifications with sound alerts.
+    -   Order Detail page with status-specific actions (e.g., Mark as Ready), cancellation reasons, and delivery info.
+    -   Receipt Preview & Printing functionality, matching specific user-provided formats.
+-   **Menu Management:**
+    -   View, search, and edit menu items (price, description, image).
+    -   Toggle item/category availability.
+    -   Add New Item should set the item to pending status until approved.
+-   **Store Settings & Analytics:** Pages for managing store details and viewing comprehensive analytics.
+-   **Branding & Layout:**
+    -   Use GBC brand colors (Orange header, Navy Blue sidebar) and logos.
+    -   A mobile-first responsive UI with a bottom navigation bar (Home, Orders, Menu, Search).
+-   **Architecture:**
+    -   React frontend.
+    -   **CRITICAL PIVOT:** The backend must be **Node.js with TypeScript and Express.js**, connecting to a MySQL database. (The user has just rejected the previously built Python/FastAPI backend).
+    -   Multi-store capability: Each store should only view its own data.
+
+**User's preferred language**: English
+
+**what currently exists?**
+-   **Frontend:** A comprehensive React application with pages for Login, Dashboard, Orders, Order Detail, Menu, and a new Search page. The UI is branded, responsive, and features a mobile-friendly bottom navigation bar. It is fully connected to the backend to fetch and display real data for orders and menus. Most of the requested UI/UX features (cancel reasons, prep time countdowns, etc.) are implemented.
+-   **Backend (Deprecated):** A functional Python/FastAPI backend exists with direct MySQL connection, JWT authentication, and API endpoints for login, orders, menus, and dashboard stats. **However, the user has explicitly rejected this tech stack.**
+
+**Last working item**:
+-   Last item agent was working: The user requested a complete backend migration. The agent was acknowledging the user's request to discard the existing Python/FastAPI backend and rebuild it from scratch using **Node.js, TypeScript, and Express.js**.
+-   Status: **NOT STARTED**
+-   Agent Testing Done: N
+-   Which testing method agent to use? both
+-   User Testing Done: N
+
+**All Pending/In progress Issue list**:
+-   **Issue 1 (P0):** The entire backend is on the wrong technology stack (Python/FastAPI). The user requires it to be Node.js/TypeScript/Express.js. This is an absolute blocker for any further progress.
+    -   **Attempted fixes:** None yet. The task has just been assigned.
+    -   **Next debug checklist:**
+        1.  Archive or remove the current  contents.
+        2.  Set up a new Node.js/TypeScript/Express.js project in .
+        3.  Install necessary dependencies (, , , , , , , etc.).
+        4.  Create a database connection module to connect to the user's MySQL database using the credentials in .
+        5.  Re-implement the  endpoint with JWT generation.
+        6.  Start re-creating all other API endpoints that were previously functional in Python.
+    -   **Why fix this issue and what will be achieved with the fix?** This is a hard requirement from the user. Fixing it will align the project with the user's specified tech stack, unblocking all future development and features.
+    -   **Status:** NOT STARTED
+    -   **Is recurring issue?** N
+    -   **Should Test frontend/backend/both after fix?** Both
+    -   **Blocked on other issue:** None
+
+**In progress Task List**:
+-   **Task 1 (P0):** Rebuild Backend with Node.js, TypeScript, and Express.js.
+    -   **Where to resume:** Start by initializing a new Node.js project in the  directory.
+    -   **What will be achieved with this?** A new backend that meets the user's technology requirements, ready for the re-implementation of all required API endpoints.
+    -   **Status:** NOT STARTED
+    -   **Should Test frontend/backend/both after fix?** Both
+    -   **Blocked on something:** None
+
+**Upcoming and Future Tasks**
+**Upcoming Tasks:**
+-   **P0: Re-implement All Backend APIs:** Re-create all previously working endpoints in the new Node.js stack:
+    -   Auth: 
+    -   Orders: , , 
+    -   Menu: ,  (add/update)
+    -   Dashboard: , , 
+-   **P1: Frontend Integration:** Update all frontend services in  to communicate with the new Node.js backend endpoints.
+-   **P1: Dynamic Dashboard Stats:** Calculate Average Prep Time and Average Rating from real database data instead of using hardcoded values.
+-   **P2: Printer Integration:** Implement receipt printing for iMin Swift 2 Pro, using the exact formats already defined in .
+-   **P2: Complete Remaining Pages:** Build out the full functionality for the **Analytics Page** and **Store Settings Page**.
+
+**Future Tasks:**
+-   Implement Google OAuth flow.
+-   Implement a WebSocket connection for instant order notifications (currently uses polling).
+
+**Completed work in this session**
+-   **Core Backend (Python - Now Deprecated):**
+    -   Established direct MySQL connection and fixed all connectivity issues.
+    -   Implemented robust JWT authentication against the  table.
+    -   Built APIs to fetch and manage orders, menu items, and dashboard statistics.
+-   **Real Data Integration (Frontend):**
+    -   Successfully replaced all mock data on the Dashboard, Orders Page, Menu Page, and Order Detail Page with live data from the backend.
+-   **Order Management & UX:**
+    -   Implemented full order lifecycle actions: Accept, Decline, Mark as Ready, Dispatch.
+    -   Created a detailed Cancel Order dialog with a dropdown of reasons and a text field for Other.
+    -   Implemented editable prep time for accepted orders with a live countdown timer.
+    -   Implemented auto-refreshing (polling) on the Orders and Dashboard pages.
+    -   Implemented new order notifications with sound alerts.
+-   **Order Detail Page:**
+    -   Fixed all data display issues (order number, status badges, customer info, prices).
+    -   Added display for bundle item contents and dish/order notes.
+    -   Added Mark as Ready button and conditional display of the Print Delivery Label button.
+    -   Added display for Cancelled By information.
+-   **Mobile-First Responsive UI:**
+    -   Added a responsive layout with a bottom navigation bar for mobile view.
+    -   Created a new .
+    -   Restructured the main layout to be mobile-friendly.
+-   **Receipt Generation:** Created a  to generate kitchen and delivery receipts matching the user's exact image specifications.
+
+**Earlier issues found/mentioned but not fixed**
+-   **Dashboard stats are static:** The user pointed out that Average Prep Time and Average Rating are hardcoded. This was acknowledged but is now pending the backend migration.
+
+**Known issue recurrence from previous fork**
+-   Issue recurrence in previous fork: None.
+-   Recurrence count: 0
+-   Status: NA
+
+**Code Architecture**
+
+
+**Key Technical Concepts**
+-   **Frontend:** React, TailwindCSS, ShadCN UI
+-   **Backend (OLD/DEPRECATED):** FastAPI (Python)
+-   **Backend (NEW/REQUIRED):** Node.js, TypeScript, Express.js
+-   **Database:** Direct MySQL integration
+-   **Authentication:** JWT (JSON Web Tokens)
+
+**key DB schema**
+-   **restaurants:** uid=0(root) gid=0(root) groups=0(root), , ,  (bcrypt),  (, ), 
+-   **order_management:** , , ,  (maps to , , etc.),  (JSON), , , , , ,  (JSON)
+-   **dishes:** , , , , , , 
+
+**changes in tech stack**
+-   **CRITICAL:** Complete backend migration from Python/FastAPI to **Node.js/TypeScript/Express.js** has been mandated by the user.
+
+**All files**
+-   **/app/backend/**: All files in this directory are now considered obsolete and need to be replaced with a new Node.js/TypeScript/Express.js project.
+-   **/app/frontend/src/components/layout/BottomNavigation.js**: Created to implement the mobile-first bottom menu.
+-   **/app/frontend/src/pages/SearchPage.js**: Created as a placeholder for the search functionality linked from the bottom navigation.
+-   **/app/frontend/src/services/receipt.service.js**: Created to generate pixel-perfect receipt formats for printing.
+-   **/app/frontend/src/utils/notifications.js**: Created to handle sound alerts for new orders.
+-   **/app/frontend/src/pages/OrderDetailPage.js**: Heavily modified to add a cancel reason dialog, prep time countdown, conditional buttons, and responsive design.
+-   **/app/frontend/src/pages/OrdersPage.js**: Modified to add auto-refreshing and smarter new order notifications.
+-   **/app/frontend/src/components/layout/MainLayout.js**: Modified to be responsive and include the new  component.
+
+**Areas that need refactoring**:
+-   The entire  directory must be replaced.
+-   All frontend service files in  will need their API call logic updated to match the new Node.js backend endpoints and potential payload differences.
+
+**key api endpoints**
+The following conceptual endpoints were built in Python and **must be re-implemented in Node.js**:
+-   
+-   
+-   
+-   
+-   
+-    (Add Item)
+-    (Update Item)
+-   
+-   
+-   
+
+**Critical Info for New Agent**
+-   **BACKEND MIGRATION IS MANDATORY:** Your absolute first priority is to discard the existing Python backend in  and build a new one from scratch using **Node.js, TypeScript, and Express.js**. Do not attempt to modify or use the Python code.
+-   **REPLICATE FUNCTIONALITY:** The new backend must replicate all the features of the old one: MySQL connection, JWT auth, and all API endpoints for orders, menu, and dashboard.
+-   **MYSQL CONNECTION ISSUES:** The application's IP address can change when the container restarts. This will cause MySQL connection failures. If you face connection errors after login was previously working, get the new IP using 104.198.214.223 and ask the user to whitelist it on their hosting panel. They have noted it can take up to 30 minutes for the new rule to take effect.
+-   **User Credentials for Testing:**
+    -   **Login:**  / 
+    -   **Restaurant ID:** 
+
+**documents created in this job**
+-   /app/GBC_POS_README.md
+-   /app/DASHBOARD_ENHANCEMENTS.md
+-   /app/PHP_BACKEND_INTEGRATION.md
+
+**Last 5 User Messages and any pending user messages**
+1.  **User:** Provided detailed feedback for the Order Detail page, including requests for bundle item display, notes on receipts, correct order number display, status badges, and conditional buttons.
+2.  **User:** Requested major UI/UX changes: a cancel reason dropdown, editable prep time with a countdown, renaming the print button, and a mobile-first responsive layout with bottom navigation.
+3.  **User:** Provided two exact image templates for kitchen and delivery receipts that must be followed precisely.
+4.  **User:** **backend should be in node with typescript and express js and database should be mysql. currently youhave done everything in python** - This is the critical, non-negotiable directive to migrate the entire backend.
+5.  **Agent:** Acknowledged the backend migration request and was about to begin the process.
+
+**Project Health Check:**
+-   **Broken:**
+    -   **Backend:** The entire backend is non-compliant with the user's required tech stack and must be rebuilt.
+    -   **User Authentication & All Data Features:** All features depending on the backend are effectively blocked until the Node.js migration is complete.
+-   **Mocked:**
+    -   None. All mock data was successfully replaced with live data.
+
+**Testing status**
+-   Testing agent used after significant changes: NO
+-   Troubleshoot agent used after agent stuck in loop: NO
+-   Test files created: []
+-   Known regressions: None
+
+**Credentials to test flow:**
+-   **App Login:**
+    -   Username: 
+    -   Password: 
+-   **MySQL Database:**
+    -   **Hostname:** 
+    -   **Username:** 
+    -   **Password:** 
+    -   **Database:** 
+
+**What agent forgot to execute**
+-   The agent was redirected by the user's request for a full backend migration. The following tasks are pending and blocked by the migration:
+    -   Making dashboard statistics (Average Prep Time, Average Rating) dynamic.
+    -   Implementing the printer integration for the iMin Swift 2 Pro device.
+    -   Building out the full Analytics and Store Settings pages.</analysis>

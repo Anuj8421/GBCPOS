@@ -221,7 +221,7 @@ PHP_API_KEY="gbc-pos-api-key-12345"
 
 ### Frontend (.env)
 ```bash
-REACT_APP_BACKEND_URL=https://easyorder-12.preview.emergentagent.com
+REACT_APP_BACKEND_URL=https://restaurant-pos-12.preview.emergentagent.com
 REACT_APP_API_BASE=/api
 ```
 
@@ -281,7 +281,7 @@ Orders use `idempotency_key` to prevent duplicates.
 
 2. **Push Orders to Us:**
    ```
-   POST https://easyorder-12.preview.emergentagent.com/api/orders/cloud-order-receive
+   POST https://restaurant-pos-12.preview.emergentagent.com/api/orders/cloud-order-receive
    Headers:
      Authorization: Bearer gbc-pos-api-key-12345
      Content-Type: application/json
@@ -306,7 +306,7 @@ Orders use `idempotency_key` to prevent duplicates.
 
 ### Test Order Reception:
 ```bash
-curl -X POST https://easyorder-12.preview.emergentagent.com/api/orders/cloud-order-receive \
+curl -X POST https://restaurant-pos-12.preview.emergentagent.com/api/orders/cloud-order-receive \
   -H "Authorization: Bearer gbc-pos-api-key-12345" \
   -H "Content-Type: application/json" \
   -d '{
@@ -319,7 +319,7 @@ curl -X POST https://easyorder-12.preview.emergentagent.com/api/orders/cloud-ord
 
 ### Test Status Update:
 ```bash
-curl -X POST https://easyorder-12.preview.emergentagent.com/api/orders/update-status \
+curl -X POST https://restaurant-pos-12.preview.emergentagent.com/api/orders/update-status \
   -H "Content-Type: application/json" \
   -d '{
     "order_number": "TEST001",
@@ -330,7 +330,7 @@ curl -X POST https://easyorder-12.preview.emergentagent.com/api/orders/update-st
 
 ### Health Check:
 ```bash
-curl https://easyorder-12.preview.emergentagent.com/api/health
+curl https://restaurant-pos-12.preview.emergentagent.com/api/health
 ```
 
 ## Error Handling
