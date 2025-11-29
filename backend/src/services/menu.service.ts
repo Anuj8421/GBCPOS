@@ -36,19 +36,31 @@ export class MenuService {
   async updateMenuItem(
     restaurantId: number,
     dishId: number,
-    updates: Partial<Dish>
+    updates: any
   ): Promise<any> {
     try {
-      const allowedFields = ['name', 'price', 'description', 'image_path', 'is_available', 'category'];
+      const fieldMapping: Record<string, string> = {
+        'name': 'name',
+        'price': 'selling_price',
+        'description': 'description',
+        'imagePath': 'primary_image',
+        'isAvailable': 'availability_status',
+        'category': 'menu_section'
+      };
+
       const updateFields: string[] = [];
       const params: any[] = [];
 
       Object.entries(updates).forEach(([key, value]) => {
-        const dbKey = key === 'imagePath' ? 'image_path' : 
-                      key === 'isAvailable' ? 'is_available' : key;
-        if (allowedFields.includes(dbKey)) {
-          updateFields.push(`${dbKey} = ?`);
-          params.push(value);
+        const dbKey = fieldMapping[key];
+        if (dbKey) {
+          if (key === 'isAvailable') {
+            updateFields.push(`${dbKey} = ?`);
+            params.push(value ? 'available' : 'unavailable');
+          } else {
+            updateFields.push(`${dbKey} = ?`);
+            params.push(value);
+          }
         }
       });
 
@@ -67,21 +79,21 @@ export class MenuService {
       await pool.execute(query, params);
 
       const [rows] = await pool.execute(
-        'SELECT * FROM dishes WHERE restaurant_id = ? AND dish_id = ?',
+        'SELECT dish_id, name, selling_price, description, primary_image, availability_status, menu_section FROM dishes WHERE restaurant_id = ? AND dish_id = ?',
         [restaurantId, dishId]
       );
 
-      const dishes = rows as Dish[];
+      const dishes = rows as any[];
       const dish = dishes[0];
 
       return {
         id: dish.dish_id,
         name: dish.name,
-        price: dish.price,
+        price: parseFloat(dish.selling_price) || 0,
         description: dish.description,
-        imagePath: dish.image_path,
-        isAvailable: dish.is_available,
-        category: dish.category
+        imagePath: dish.primary_image,
+        isAvailable: dish.availability_status === 'available',
+        category: dish.menu_section
       };
     } catch (error) {
       console.error('Update menu item error:', error);
