@@ -157,17 +157,4 @@ export class OrderService {
     }
   }
 
-  async updatePrepTime(restaurantId: number, orderNumber: string, prepTimeMinutes: number): Promise<any> {
-    try {
-      await pool.execute(
-        'UPDATE order_management SET prep_time_minutes = ? WHERE restaurant_id = ? AND order_number = ?',
-        [prepTimeMinutes, restaurantId, orderNumber]
-      );
-
-      return await this.getOrderDetail(restaurantId, orderNumber);
-    } catch (error) {
-      console.error('Update prep time error:', error);
-      throw error;
-    }
-  }
 }
