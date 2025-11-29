@@ -7,10 +7,11 @@ export class OrderService {
     try {
       let query = `
         SELECT 
-          order_id, order_number, fulfillment_status, customer, 
+          order_id, order_number, fulfillment_status, customer, customer_email, customer_phone,
           total_amount, created_at, approved_at, ready_at, 
-          dispatched_at, completed_at, cancelled_at, cancelled_by,
-          cancellation_reason, notes, items, prep_time_minutes
+          dispatched_at, delivery_date, cancelled_at,
+          cancel_reason, kitchen_notes, product_details,
+          delivery_method, customer_address
         FROM order_management 
         WHERE restaurant_id = ?
       `;
@@ -25,7 +26,7 @@ export class OrderService {
       query += ' ORDER BY created_at DESC';
 
       const [rows] = await pool.execute(query, params);
-      const orders = rows as Order[];
+      const orders = rows as any[];
 
       return orders.map(order => ({
         orderNumber: order.order_number,
