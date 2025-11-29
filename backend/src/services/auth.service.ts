@@ -37,7 +37,7 @@ export class AuthService {
 
       return {
         token,
-        user: {
+        restaurant: {
           id: restaurant.id,
           username: restaurant.username,
           email: restaurant.email,
