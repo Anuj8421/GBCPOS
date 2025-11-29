@@ -28,23 +28,31 @@ export class OrderService {
       const [rows] = await pool.execute(query, params);
       const orders = rows as any[];
 
-      return orders.map(order => ({
-        orderNumber: order.order_number,
-        status: mapOrderStatus(order.fulfillment_status),
-        customer: parseJsonField(order.customer),
-        totalAmount: order.total_amount,
-        createdAt: order.created_at,
-        approvedAt: order.approved_at,
-        readyAt: order.ready_at,
-        dispatchedAt: order.dispatched_at,
-        completedAt: order.completed_at,
-        cancelledAt: order.cancelled_at,
-        cancelledBy: order.cancelled_by,
-        cancellationReason: order.cancellation_reason,
-        notes: order.notes,
-        items: parseJsonField(order.items),
-        prepTimeMinutes: order.prep_time_minutes
-      }));
+      return orders.map(order => {
+        const items = parseJsonField(order.product_details);
+        return {
+          orderNumber: order.order_number,
+          status: mapOrderStatus(order.fulfillment_status),
+          customer: {
+            name: order.customer,
+            email: order.customer_email,
+            phone: order.customer_phone,
+            address: order.customer_address
+          },
+          totalAmount: parseFloat(order.total_amount) || 0,
+          createdAt: order.created_at,
+          approvedAt: order.approved_at,
+          readyAt: order.ready_at,
+          dispatchedAt: order.dispatched_at,
+          completedAt: order.delivery_date,
+          cancelledAt: order.cancelled_at,
+          cancelledBy: order.cancelled_at ? 'restaurant' : null,
+          cancellationReason: order.cancel_reason,
+          notes: order.kitchen_notes,
+          items: Array.isArray(items) ? items : [],
+          deliveryMethod: order.delivery_method
+        };
+      });
     } catch (error) {
       console.error('Get orders error:', error);
       throw error;
