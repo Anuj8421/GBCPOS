@@ -101,20 +101,25 @@ export class MenuService {
     }
   }
 
-  async addMenuItem(restaurantId: number, item: Partial<Dish>): Promise<any> {
+  async addMenuItem(restaurantId: number, item: any): Promise<any> {
     try {
+      const slug = item.name.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Date.now();
+      
       const [result] = await pool.execute(
         `INSERT INTO dishes 
-        (restaurant_id, name, price, description, image_path, is_available, category)
-        VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        (restaurant_id, name, slug, selling_price, description, primary_image, availability_status, menu_section, is_active, is_deleted)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           restaurantId,
           item.name,
-          item.price,
-          item.description || null,
-          item.image_path || null,
-          false,
-          item.category || null
+          slug,
+          item.price || 0,
+          item.description || '',
+          item.imagePath || '',
+          'unavailable',
+          item.category || 'Uncategorized',
+          0,
+          0
         ]
       );
 
@@ -122,21 +127,21 @@ export class MenuService {
       const dishId = insertResult.insertId;
 
       const [rows] = await pool.execute(
-        'SELECT * FROM dishes WHERE dish_id = ?',
+        'SELECT dish_id, name, selling_price, description, primary_image, availability_status, menu_section FROM dishes WHERE dish_id = ?',
         [dishId]
       );
 
-      const dishes = rows as Dish[];
+      const dishes = rows as any[];
       const dish = dishes[0];
 
       return {
         id: dish.dish_id,
         name: dish.name,
-        price: dish.price,
+        price: parseFloat(dish.selling_price) || 0,
         description: dish.description,
-        imagePath: dish.image_path,
-        isAvailable: dish.is_available,
-        category: dish.category
+        imagePath: dish.primary_image,
+        isAvailable: dish.availability_status === 'available',
+        category: dish.menu_section
       };
     } catch (error) {
       console.error('Add menu item error:', error);
