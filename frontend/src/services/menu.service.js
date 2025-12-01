@@ -16,13 +16,15 @@ export const menuService = {
   // Get all menu items
   getMenuItems: async (restaurantId, categoryId = null, search = null) => {
     try {
-      const params = { restaurant_id: restaurantId };
+      const params = {};
       if (categoryId) params.category = categoryId;
       if (search) params.search = search;
+      // Backend gets restaurant ID from JWT token
       const response = await apiClient.get('/menu/items', { params });
       return response.data;
     } catch (error) {
-      throw new Error(error.response?.data?.message || 'Failed to fetch menu items');
+      console.error('getMenuItems error:', error);
+      throw new Error(error.response?.data?.error || error.response?.data?.message || 'Failed to fetch menu items');
     }
   },
 
