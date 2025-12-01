@@ -53,6 +53,7 @@ function App() {
               <Route path="finance" element={<FinancePage />} />
               <Route path="users" element={<UsersPage />} />
               <Route path="settings" element={<SettingsPage />} />
+              <Route path="debug" element={<DebugPage />} />
             </Route>
 
             {/* Catch all - redirect to dashboard */}
