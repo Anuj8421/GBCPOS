@@ -91,14 +91,23 @@ const Dashboard = () => {
       const ordersData = await orderService.getOrders(restaurantId, null, 10);
       setRecentOrders(ordersData.orders || []);
       
-      // Fetch top dishes and frequent customers
-      const topDishesData = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/dashboard/top-dishes?restaurant_id=${restaurantId}&start_date=${startDate}&end_date=${endDate}`)
-        .then(res => res.json())
-        .catch(() => ({ dishes: [] }));
+      // Fetch top dishes and frequent customers using apiClient
+      let topDishesData = [];
+      let frequentCustomersData = [];
       
-      const frequentCustomersData = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/dashboard/frequent-customers?restaurant_id=${restaurantId}&start_date=${startDate}&end_date=${endDate}`)
-        .then(res => res.json())
-        .catch(() => ({ customers: [] }));
+      try {
+        const topDishesResponse = await apiClient.get('/dashboard/top-dishes');
+        topDishesData = topDishesResponse.data || [];
+      } catch (err) {
+        console.error('Failed to fetch top dishes:', err);
+      }
+      
+      try {
+        const customersResponse = await apiClient.get('/dashboard/frequent-customers');
+        frequentCustomersData = customersResponse.data || [];
+      } catch (err) {
+        console.error('Failed to fetch frequent customers:', err);
+      }
       
       // Build summary data
       setSummary({
