@@ -4,12 +4,14 @@ export const orderService = {
   // Get all orders with optional status filter
   getOrders: async (restaurantId, status = null, limit = 100) => {
     try {
-      const params = { restaurant_id: restaurantId, limit };
+      const params = {};
       if (status) params.status = status;
+      // Backend gets restaurant ID from JWT token, no need to send it
       const response = await apiClient.get('/orders/list', { params });
-      return response.data;
+      return { orders: response.data }; // Wrap in orders object for compatibility
     } catch (error) {
-      throw new Error(error.response?.data?.message || 'Failed to fetch orders');
+      console.error('getOrders error:', error);
+      throw new Error(error.response?.data?.error || error.response?.data?.message || 'Failed to fetch orders');
     }
   },
 
