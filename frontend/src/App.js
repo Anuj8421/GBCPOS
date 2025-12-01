@@ -19,6 +19,7 @@ import UsersPage from '@/pages/UsersPage';
 import SettingsPage from '@/pages/SettingsPage';
 import TopDishesPage from '@/pages/TopDishesPage';
 import FrequentCustomersPage from '@/pages/FrequentCustomersPage';
+import DebugPage from '@/pages/DebugPage';
 import '@/App.css';
 
 function App() {
