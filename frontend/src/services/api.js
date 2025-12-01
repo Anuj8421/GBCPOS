@@ -1,23 +1,33 @@
 import axios from 'axios';
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+// Function to get the current backend URL (supports dynamic changes via localStorage)
+const getBackendUrl = () => {
+  return localStorage.getItem('custom_backend_url') || process.env.REACT_APP_BACKEND_URL || '';
+};
+
+const BACKEND_URL = getBackendUrl();
 const API_BASE = `${BACKEND_URL}/api`;
 
 const apiClient = axios.create({
-  baseURL: API_BASE,
   timeout: 30000,
   headers: {
     'Content-Type': 'application/json'
   }
 });
 
-// Request interceptor for adding auth token
+// Request interceptor for adding auth token AND dynamic baseURL
 apiClient.interceptors.request.use(
   (config) => {
+    // CRITICAL: Set baseURL dynamically on every request
+    const currentBackendUrl = getBackendUrl();
+    config.baseURL = `${currentBackendUrl}/api`;
+    
+    // Add auth token
     const token = localStorage.getItem('auth_token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    
     return config;
   },
   (error) => {
