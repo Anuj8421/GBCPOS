@@ -48,4 +48,9 @@ apiClient.interceptors.response.use(
   }
 );
 
-export { apiClient, BACKEND_URL, API_BASE };
+// Export both apiClient and helper function to get current URLs
+export { apiClient, getBackendUrl };
+
+// For backward compatibility, export BACKEND_URL and API_BASE as getters
+export const BACKEND_URL = getBackendUrl();
+export const API_BASE = `${getBackendUrl()}/api`;
