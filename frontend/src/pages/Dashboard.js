@@ -7,6 +7,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { analyticsService } from '@/services/analytics.service';
 import { orderService } from '@/services/order.service';
+import { apiClient } from '@/services/api';
 import { useAuth } from '@/context/AuthContext';
 import { formatCurrency, formatRelativeTime, formatDate } from '@/utils/helpers';
 import { 
