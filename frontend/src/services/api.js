@@ -5,9 +5,6 @@ const getBackendUrl = () => {
   return localStorage.getItem('custom_backend_url') || process.env.REACT_APP_BACKEND_URL || '';
 };
 
-const BACKEND_URL = getBackendUrl();
-const API_BASE = `${BACKEND_URL}/api`;
-
 const apiClient = axios.create({
   timeout: 30000,
   headers: {
