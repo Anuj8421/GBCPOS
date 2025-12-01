@@ -20,12 +20,12 @@ export const orderService = {
     try {
       // URL encode the order number to handle special characters like #
       const encodedOrderNumber = encodeURIComponent(orderNumber);
-      const response = await apiClient.get(`/orders/detail/${encodedOrderNumber}`, {
-        params: { restaurant_id: restaurantId }
-      });
+      // Backend gets restaurant ID from JWT token
+      const response = await apiClient.get(`/orders/detail/${encodedOrderNumber}`);
       return response.data;
     } catch (error) {
-      throw new Error(error.response?.data?.message || 'Failed to fetch order');
+      console.error('getOrderByNumber error:', error);
+      throw new Error(error.response?.data?.error || error.response?.data?.message || 'Failed to fetch order');
     }
   },
 
