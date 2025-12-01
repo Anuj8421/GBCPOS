@@ -68,13 +68,15 @@ export const orderService = {
   // Get dashboard statistics
   getDashboardStats: async (restaurantId, startDate = null, endDate = null) => {
     try {
-      const params = { restaurant_id: restaurantId };
-      if (startDate) params.start_date = startDate;
-      if (endDate) params.end_date = endDate;
+      const params = {};
+      if (startDate) params.startDate = startDate;
+      if (endDate) params.endDate = endDate;
+      // Backend gets restaurant ID from JWT token
       const response = await apiClient.get('/dashboard/stats', { params });
       return response.data;
     } catch (error) {
-      throw new Error(error.response?.data?.message || 'Failed to fetch dashboard stats');
+      console.error('getDashboardStats error:', error);
+      throw new Error(error.response?.data?.error || error.response?.data?.message || 'Failed to fetch dashboard stats');
     }
   },
 
