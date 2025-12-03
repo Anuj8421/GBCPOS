@@ -61,56 +61,14 @@ export const printerService = {
   // Print customer receipt
   printCustomerReceipt: async (order) => {
     try {
-      if (!window.IminPrinter) {
+      if (!iminPrinterService.isPrinterAvailable()) {
         console.log('Mock: Printing customer receipt for order', order.id);
         return { success: true, mock: true };
       }
 
-      await window.IminPrinter.setAlignment(1); // Center
-      await window.IminPrinter.setTextSize(32);
-      await window.IminPrinter.printText('RECEIPT\n\n');
+      // Use iMin service to print customer receipt
+      return await iminPrinterService.printCustomerReceipt(order);
       
-      await window.IminPrinter.setTextSize(24);
-      await window.IminPrinter.printText(`${order.storeName}\n`);
-      await window.IminPrinter.printText(`${order.storeAddress}\n\n`);
-      
-      await window.IminPrinter.setAlignment(0); // Left
-      await window.IminPrinter.printText(`Order #${order.id}\n`);
-      await window.IminPrinter.printText(`Date: ${new Date(order.createdAt).toLocaleString()}\n`);
-      await window.IminPrinter.printText('------------------------\n');
-      
-      // Print items
-      for (const item of order.items) {
-        await window.IminPrinter.printText(`${item.quantity}x ${item.name}`);
-        await window.IminPrinter.setAlignment(2); // Right
-        await window.IminPrinter.printText(`$${(item.price * item.quantity).toFixed(2)}\n`);
-        await window.IminPrinter.setAlignment(0); // Left
-      }
-      
-      await window.IminPrinter.printText('------------------------\n');
-      await window.IminPrinter.printText(`Subtotal:`);
-      await window.IminPrinter.setAlignment(2);
-      await window.IminPrinter.printText(`$${order.subtotal.toFixed(2)}\n`);
-      await window.IminPrinter.setAlignment(0);
-      await window.IminPrinter.printText(`Tax:`);
-      await window.IminPrinter.setAlignment(2);
-      await window.IminPrinter.printText(`$${order.tax.toFixed(2)}\n`);
-      await window.IminPrinter.setAlignment(0);
-      await window.IminPrinter.printText(`Delivery:`);
-      await window.IminPrinter.setAlignment(2);
-      await window.IminPrinter.printText(`$${order.deliveryFee.toFixed(2)}\n`);
-      await window.IminPrinter.setAlignment(0);
-      await window.IminPrinter.setTextSize(28);
-      await window.IminPrinter.printText(`TOTAL:`);
-      await window.IminPrinter.setAlignment(2);
-      await window.IminPrinter.printText(`$${order.total.toFixed(2)}\n`);
-      
-      await window.IminPrinter.setAlignment(1);
-      await window.IminPrinter.printText('\nThank you!\n');
-      await window.IminPrinter.printText('\n\n\n');
-      await window.IminPrinter.feedPaper(3);
-      
-      return { success: true };
     } catch (error) {
       console.error('Customer receipt print failed:', error);
       return { success: false, error: error.message };
