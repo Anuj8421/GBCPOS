@@ -479,6 +479,62 @@ class IminPrinterService {
   }
 
   /**
+   * Print kitchen receipt (wrapper for printReceipt with kitchen type)
+   */
+  async printKitchenReceipt(order) {
+    const receiptData = this.formatOrderForReceipt(order, 'kitchen');
+    return await this.printReceipt(receiptData);
+  }
+
+  /**
+   * Print delivery receipt (wrapper for printReceipt with delivery type)
+   */
+  async printDeliveryReceipt(order) {
+    const receiptData = this.formatOrderForReceipt(order, 'delivery');
+    return await this.printReceipt(receiptData);
+  }
+
+  /**
+   * Print customer receipt
+   */
+  async printCustomerReceipt(order) {
+    const receiptData = this.formatOrderForReceipt(order, 'customer');
+    return await this.printReceipt(receiptData);
+  }
+
+  /**
+   * Test print (alias for printTestPage)
+   */
+  async testPrint() {
+    return await this.printTestPage();
+  }
+
+  /**
+   * Format order data for receipt printing
+   */
+  formatOrderForReceipt(order, type = 'kitchen') {
+    return {
+      restaurantName: 'The Curry Vault',
+      restaurantAddress: '',
+      orderNumber: order.id || order.orderNumber,
+      orderDate: order.createdAt ? new Date(order.createdAt).toLocaleString('en-GB') : new Date().toLocaleString('en-GB'),
+      customerName: order.customerName || 'Guest',
+      customerAddress: order.deliveryAddress || order.customerAddress || '',
+      items: (order.items || []).map(item => ({
+        name: item.name,
+        quantity: item.quantity,
+        price: item.price,
+        modifiers: item.modifiers || []
+      })),
+      subtotal: order.subtotal || order.total || 0,
+      tax: order.tax || 0,
+      total: order.total || 0,
+      notes: order.specialInstructions || order.notes || '',
+      type: type
+    };
+  }
+
+  /**
    * Open cash drawer (if available)
    */
   async openCashDrawer() {
