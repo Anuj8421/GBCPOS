@@ -336,20 +336,40 @@ const OrderDetailPage = () => {
   };
 
   const handlePrintKitchenReceipt = async () => {
-    const result = await printerService.printKitchenReceipt(order);
-    if (result.success) {
-      toast.success('Kitchen receipt printed');
-    } else {
-      toast.error('Failed to print: ' + result.error);
+    try {
+      const result = await printerService.printKitchenReceipt(order);
+      if (result.success) {
+        const isPrinterAvailable = printerService.isPrinterAvailable();
+        if (isPrinterAvailable) {
+          toast.success('Kitchen receipt sent to printer');
+        } else {
+          toast.success('Kitchen receipt downloaded (Browser mode - will print on iMin device)');
+        }
+      } else {
+        toast.error('Failed to print: ' + result.error);
+      }
+    } catch (error) {
+      console.error('Print error:', error);
+      toast.error('Print failed: ' + error.message);
     }
   };
 
   const handlePrintSticker = async () => {
-    const result = await printerService.printDeliverySticker(order);
-    if (result.success) {
-      toast.success('Delivery sticker printed');
-    } else {
-      toast.error('Failed to print: ' + result.error);
+    try {
+      const result = await printerService.printDeliverySticker(order);
+      if (result.success) {
+        const isPrinterAvailable = printerService.isPrinterAvailable();
+        if (isPrinterAvailable) {
+          toast.success('Delivery label sent to printer');
+        } else {
+          toast.success('Delivery label downloaded (Browser mode - will print on iMin device)');
+        }
+      } else {
+        toast.error('Failed to print: ' + result.error);
+      }
+    } catch (error) {
+      console.error('Print error:', error);
+      toast.error('Print failed: ' + error.message);
     }
   };
 
