@@ -44,36 +44,13 @@ export const printerService = {
   // Print delivery receipt using EXACT format from provided image  
   printDeliverySticker: async (order) => {
     try {
-      if (!window.IminPrinter) {
-        // For web testing - use receipt service
+      if (!iminPrinterService.isPrinterAvailable()) {
+        // For web testing - use receipt service (downloads file)
         return await receiptService.printDeliveryReceipt(order);
       }
 
-      // Get restaurant data
-      const restaurant = {
-        name: "The Curry Vault", // Dynamic from order data
-        address: "Restaurant Address"
-      };
-      
-      const receiptText = receiptService.generateDeliveryReceipt(order, restaurant);
-      
-      // Print using iMin printer
-      await window.IminPrinter.setAlignment(1); // Center alignment for header
-      await window.IminPrinter.setTextSize(28);
-      
-      // Print the formatted receipt
-      const lines = receiptText.split('\n');
-      for (const line of lines) {
-        if (line.includes('GENERAL') || line.includes('BILIMORIA') || line.includes('Delivery Receipt')) {
-          await window.IminPrinter.setAlignment(1); // Center
-        } else {
-          await window.IminPrinter.setAlignment(0); // Left
-        }
-        await window.IminPrinter.printText(line + '\n');
-      }
-      
-      await window.IminPrinter.feedPaper(3);
-      return { success: true };
+      // Use iMin service to print delivery receipt
+      return await iminPrinterService.printDeliveryReceipt(order);
       
     } catch (error) {
       console.error('Delivery receipt print failed:', error);
