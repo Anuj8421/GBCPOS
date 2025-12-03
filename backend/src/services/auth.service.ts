@@ -41,7 +41,8 @@ export class AuthService {
           id: restaurant.id,
           username: restaurant.username,
           email: restaurant.email,
-          status: restaurant.status
+          status: restaurant.status,
+          restaurant_id: restaurant.id
         }
       };
     } catch (error) {
