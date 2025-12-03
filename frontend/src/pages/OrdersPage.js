@@ -46,31 +46,30 @@ const OrdersPage = () => {
       const statusFilter = status === ORDER_STATUS.ALL ? null : status;
       const response = await orderService.getOrders(restaurantId, statusFilter, 100);
       
+      // Backend returns a plain array of orders (not response.orders)
+      const orderList = Array.isArray(response) ? response : (response.orders || []);
+      
       // Transform API data to match component expectations
-      const transformedOrders = (response.orders || []).map(order => {
-        // Parse items if it's a JSON string
-        let items = [];
-        try {
-          items = typeof order.items === 'string' ? JSON.parse(order.items) : order.items;
-        } catch (e) {
-          console.error('Error parsing order items:', e);
-        }
-        
+      const transformedOrders = orderList.map(order => {
         return {
           id: order.orderNumber,
           customerName: order.customer?.name || 'Guest',
           customerPhone: order.customer?.phone || '',
           deliveryAddress: order.customer?.address || '',
           status: order.status,
-          total: order.amount,
-          subtotal: order.amount, // Calculate properly if you have breakdown
+          total: parseFloat(order.totalAmount) || 0,
+          subtotal: parseFloat(order.totalAmount) || 0,
           tax: 0,
           deliveryFee: 0,
-          items: items.map(item => ({
-            name: item.dish_name || item.name || 'Item',
+          items: (order.items || []).map(item => ({
+            name: item.dish_name || 'Item',
             quantity: item.quantity || 1,
-            price: parseFloat(item.unit_price || item.price || 0),
-            modifiers: item.customizations || []
+            price: parseFloat(item.unit_price || item.selling_price || 0),
+            modifiers: item.customizations
+              ? Object.entries(item.customizations).map(([key, arr]) => {
+                  return `${key}: ${Array.isArray(arr) ? arr.join(', ') : arr}`;
+                })
+              : []
           })),
           createdAt: order.createdAt,
           acceptedAt: order.approvedAt,
