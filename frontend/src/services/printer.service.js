@@ -32,31 +32,8 @@ export const printerService = {
         return await receiptService.printKitchenReceipt(order);
       }
 
-      // Get restaurant data (should be passed or fetched from context)
-      const restaurant = {
-        name: "The Curry Vault", // Dynamic from order data
-        address: "Restaurant Address"
-      };
-      
-      const receiptText = receiptService.generateKitchenReceipt(order, restaurant);
-      
-      // Print using iMin printer
-      await window.IminPrinter.setAlignment(1); // Center alignment for header
-      await window.IminPrinter.setTextSize(28);
-      
-      // Print the formatted receipt
-      const lines = receiptText.split('\n');
-      for (const line of lines) {
-        if (line.includes('GENERAL') || line.includes('BILIMORIA') || line.includes('Kitchen Receipt')) {
-          await window.IminPrinter.setAlignment(1); // Center
-        } else {
-          await window.IminPrinter.setAlignment(0); // Left
-        }
-        await window.IminPrinter.printText(line + '\n');
-      }
-      
-      await window.IminPrinter.feedPaper(3);
-      return { success: true };
+      // Use iMin service to print kitchen receipt
+      return await iminPrinterService.printKitchenReceipt(order);
       
     } catch (error) {
       console.error('Kitchen receipt print failed:', error);
