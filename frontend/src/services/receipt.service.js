@@ -190,6 +190,17 @@ Total                       ${formatCurrency(order.total)}
   // Print Delivery Receipt  
   printDeliveryReceipt: async (order) => {
     try {
+      // Validate order data
+      if (!order) {
+        throw new Error('Order data is missing');
+      }
+      if (!order.orderNumber) {
+        throw new Error('Order number is missing');
+      }
+      if (!order.items || order.items.length === 0) {
+        throw new Error('Order has no items');
+      }
+      
       // Get restaurant data
       const restaurant = {
         name: "The Curry Vault", // This should come from order data
