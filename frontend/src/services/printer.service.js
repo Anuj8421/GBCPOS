@@ -1,33 +1,34 @@
-// iMin Printer Service for Swift 2 Pro
-// This service will interface with iMin's printer SDK
+// iMin Printer Service for React GBC POS App
+// Complete integration with iMin Swift 2 Pro POS Device
+import iminPrinterService from './iminPrinter.service';
 import { receiptService } from './receipt.service';
 
 export const printerService = {
-  // Check if printer is available
+  // Check if printer is available (iMin device)
   isPrinterAvailable: () => {
-    // Check if running on iMin device with printer SDK
-    return typeof window.IminPrinter !== 'undefined';
+    return iminPrinterService.isPrinterAvailable();
   },
 
   // Initialize printer
-  initPrinter: async () => {
-    try {
-      if (window.IminPrinter) {
-        await window.IminPrinter.init();
-        return { success: true };
-      }
-      return { success: false, error: 'Printer not available' };
-    } catch (error) {
-      console.error('Printer initialization failed:', error);
-      return { success: false, error: error.message };
-    }
+  initialize: async () => {
+    return await iminPrinterService.initialize();
   },
 
-  // Print kitchen receipt using EXACT format from provided image
+  // Get printer status
+  getPrinterStatus: async () => {
+    return await iminPrinterService.getPrinterStatus();
+  },
+
+  // Get printer info
+  getPrinterInfo: async () => {
+    return await iminPrinterService.getPrinterInfo();
+  },
+
+  // Print kitchen receipt using iMin SDK
   printKitchenReceipt: async (order) => {
     try {
-      if (!window.IminPrinter) {
-        // For web testing - use receipt service
+      if (!iminPrinterService.isPrinterAvailable()) {
+        // For web testing - use receipt service (downloads file)
         return await receiptService.printKitchenReceipt(order);
       }
 
