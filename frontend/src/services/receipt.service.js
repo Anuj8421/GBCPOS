@@ -145,6 +145,17 @@ Total                       ${formatCurrency(order.total)}
   // Print Kitchen Receipt
   printKitchenReceipt: async (order) => {
     try {
+      // Validate order data
+      if (!order) {
+        throw new Error('Order data is missing');
+      }
+      if (!order.orderNumber) {
+        throw new Error('Order number is missing');
+      }
+      if (!order.items || order.items.length === 0) {
+        throw new Error('Order has no items');
+      }
+      
       // Get restaurant data (would need to be passed or fetched)
       const restaurant = {
         name: "The Curry Vault", // This should come from order data
@@ -154,20 +165,22 @@ Total                       ${formatCurrency(order.total)}
       const receipt = receiptService.generateKitchenReceipt(order, restaurant);
       
       // For web testing - show in console and create download
-      console.log('KITCHEN RECEIPT:\n' + receipt);
+      console.log('=== KITCHEN RECEIPT ===');
+      console.log(receipt);
+      console.log('======================');
       
       // Create downloadable text file for testing
       const blob = new Blob([receipt], { type: 'text/plain' });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `kitchen-receipt-${order.orderNumber}.txt`;
+      a.download = `kitchen-receipt-${order.orderNumber.replace('#', '')}-${Date.now()}.txt`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
       
-      return { success: true, message: 'Kitchen receipt printed' };
+      return { success: true, message: 'Kitchen receipt generated', mock: true };
     } catch (error) {
       console.error('Kitchen receipt print error:', error);
       return { success: false, error: error.message };
