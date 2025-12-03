@@ -128,23 +128,27 @@ const OrderDetailPage = () => {
         customerPhone: orderData.customer?.phone || '',
         customerEmail: orderData.customer?.email || '',
         deliveryAddress: orderData.customer?.address || '',
-        total: orderData.amount || 0,
-        subtotal: orderData.amount || 0, // Calculate properly if you have breakdown
+        total: parseFloat(orderData.totalAmount) || 0,
+        subtotal: parseFloat(orderData.totalAmount) || 0,
         tax: 0,
         deliveryFee: 0,
         specialInstructions: orderData.notes || '',
-        items: parsedItems.map(item => ({
-          name: item.dish_name || item.name || 'Item',
+        items: (orderData.items || []).map(item => ({
+          name: item.dish_name || 'Item',
           quantity: parseInt(item.quantity) || 1,
-          price: parseFloat(item.unit_price || item.price || 0),
-          modifiers: item.customizations || [],
+          price: parseFloat(item.unit_price || item.selling_price || 0),
+          modifiers: item.customizations
+            ? Object.entries(item.customizations).map(([key, arr]) => {
+                return `${key}: ${Array.isArray(arr) ? arr.join(', ') : arr}`;
+              })
+            : [],
           notes: item.notes || '',
           bundleItems: item.bundle_items || item.bundleItems || []
         })),
         acceptedAt: orderData.approvedAt,
         prepTime: null,
         whoCancelled: orderData.cancelledBy || 'Restaurant',
-        cancellationReason: orderData.cancelReason || 'No reason provided'
+        cancellationReason: orderData.cancellationReason || orderData.cancelReason || 'No reason provided'
       };
       
       setOrder(transformedOrder);
