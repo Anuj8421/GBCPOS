@@ -78,19 +78,14 @@ export const printerService = {
   // Test print
   testPrint: async () => {
     try {
-      if (!window.IminPrinter) {
+      if (!iminPrinterService.isPrinterAvailable()) {
         console.log('Mock: Test print');
         return { success: true, mock: true };
       }
 
-      await window.IminPrinter.setAlignment(1);
-      await window.IminPrinter.setTextSize(28);
-      await window.IminPrinter.printText('GBC POS Test Print\n');
-      await window.IminPrinter.printText(`${new Date().toLocaleString()}\n`);
-      await window.IminPrinter.printText('Printer is working!\n\n\n');
-      await window.IminPrinter.feedPaper(3);
+      // Use iMin service to test print
+      return await iminPrinterService.testPrint();
       
-      return { success: true };
     } catch (error) {
       console.error('Test print failed:', error);
       return { success: false, error: error.message };
